@@ -7,6 +7,7 @@
     <script type='text/javascript' src='https://d3js.org/d3.v5.min.js'></script>
     <script type='text/javascript' src='js/common.js'></script>
     <script type='text/javascript' src='js/flow-file.js'></script>
+    <script type='text/javascript' src='js/processor.js'></script>
     <style>
         body {
             font-family: Arial;
@@ -42,9 +43,23 @@
             }
         };
 
+        var p1 = {
+            position: { x: 60, y: 250 },
+            id: '1',
+            name: 'UpdateAttribute',
+            properties: [
+                {
+                    name: 'updateAttributeName1',
+                    value: '${now()}'
+                }
+            ]
+        }
+
         var flowFiles = [f1, f2];
+        var processors = [p1];
 
         flowFile.render(flowFiles);
+        processor.render(processors);
 
         var updateFlowFiles = () => {
             flowFiles[1].position.x = 80;

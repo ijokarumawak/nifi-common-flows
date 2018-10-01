@@ -30,6 +30,9 @@ var flowFile = {
                 flowFile.render(flowFiles);
             });
 
+        // Remove deleted ones
+        exContainer.exit().remove();
+
         // Create attribute place-holder
         newContainer.append('div').text('Attributes').classed('data-label', true)
             .on('click', d => {
@@ -55,7 +58,7 @@ var flowFile = {
         // Common rendering logic for existing and new ones.
         [exContainer, newContainer].forEach(container => {
             // Update positions.
-            container.transition()
+            container
                 .style('left', d => `${d.position.x}px`)
                 .style('top', d => `${d.position.y}px`);
 

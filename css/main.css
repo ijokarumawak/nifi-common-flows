@@ -1,14 +1,9 @@
-.flow-file {
-    background-color: white;
-    border: 1px solid #C3C3C7;
-    box-shadow: 5px 5px 3px #C3C3C7;
-    position: absolute;
+body {
+    font-family: Arial;
 }
 
-.flow-file-id {
-    padding: 8px;
-    background-color: #409CB4;
-    color: #D8EBF0;
+#control-panel {
+    font-size: larger;
 }
 
 .data-label {
@@ -20,10 +15,38 @@
     border-bottom: 2px solid #9FCDD9;
 }
 
+.flow-file {
+    background-color: white;
+    border: 1px solid #C3C3C7;
+    box-shadow: 5px 5px 3px #C3C3C7;
+    position: absolute;
+}
+
+.flow-file-id {
+    padding: 8px;
+    background-color: #92B281;
+    color: #D8EBF0;
+}
+
 .flow-file-attributes {
     padding: 5px;
 }
 
 .flow-file-content {
     padding: 5px;
+}
+
+.processor {
+    background-color: white;
+    border: 1px solid #C3C3C7;
+    box-shadow: 5px 5px 3px #C3C3C7;
+    position: absolute;
+}
+
+.processor-name {
+    font-family: Arial;
+    font-weight: bolder;
+    padding: 8px;
+    background-color: #409CB4;
+    color: #D8EBF0;
 }

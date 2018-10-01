@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <title>FlowFiles</title>
+    <link rel='stylesheet' type='text/css' href='css/main.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type='text/javascript' src='https://d3js.org/d3.v5.min.js'></script>
+    <script type='text/javascript' src='js/common.js'></script>
+    <script type='text/javascript' src='js/control-panel.js'></script>
+    <script type='text/javascript' src='js/flow-file.js'></script>
+    <script type='text/javascript' src='js/processor.js'></script>
+</head>
+
+<body>
+    <div id="control-panel">
+        <i id="diagram-first" class="fa fa-angle-double-left"></i>
+        <i id="diagram-previous" class="fa fa-angle-left"></i>
+        <span id="diagram-index"></span>
+        <i id="diagram-next" class="fa fa-angle-right"></i>
+        <i id="diagram-last" class="fa fa-angle-double-right"></i>
+    </div>
+
+    <div id='diagram-container'></div>
+    <script language='javascript'>
+        var f1 = {
+            position: { x: 20, y: 50 },
+            id: '1',
+            attributes: [
+                {name: 'a', value: 'one'}
+            ],
+            content: {
+                type: 'text',
+                value: 'Hello world'
+            },
+            showData: true,
+            showAttributes: true
+        };
+
+        var f2 = {
+            position: { x: 20, y: 500 },
+            id: '2',
+            attributes: [
+                {name: 'a', value: 'one'},
+                {name: 'b', value: 'two'}
+            ],
+            content: {
+                type: 'text',
+                value: 'Hello world II'
+            },
+            showData: true,
+            showAttributes: true
+        };
+
+        var p1 = {
+            position: { x: 20, y: 250 },
+            id: '1',
+            name: 'UpdateAttribute',
+            properties: [
+                {
+                    name: 'updateAttributeName1',
+                    value: '${now()}'
+                }
+            ],
+            showDetails: true
+        }
+
+        var flowFiles = [];
+        var processors = [];
+
+        var diagramSequence = {
+            index: 0,
+            actions: [
+                () => {
+                    flowFiles = [f1];
+                    processors = [p1];
+                    flowFile.render(flowFiles);
+                    processor.render(processors);
+                },
+                () => {
+                    flowFiles.push(f2);
+                    flowFile.render(flowFiles);
+                }
+            ]
+        }
+        controlPanel.render(diagramSequence);
+
+    </script>
+    </div>
+</body>
+
+</html>
