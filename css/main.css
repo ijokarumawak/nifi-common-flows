@@ -1,0 +1,29 @@
+.flow-file {
+    background-color: white;
+    border: 1px solid #C3C3C7;
+    box-shadow: 5px 5px 3px #C3C3C7;
+    position: absolute;
+}
+
+.flow-file-id {
+    padding: 8px;
+    background-color: #409CB4;
+    color: #D8EBF0;
+}
+
+.data-label {
+    padding-top: 5px;
+    padding: 2px;
+    font-family: sans-serif;
+    font-weight: bolder;
+    background-color: #F3F3F3;
+    border-bottom: 2px solid #9FCDD9;
+}
+
+.flow-file-attributes {
+    padding: 5px;
+}
+
+.flow-file-content {
+    padding: 5px;
+}
