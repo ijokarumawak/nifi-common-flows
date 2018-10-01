@@ -10,6 +10,7 @@
     <script type='text/javascript' src='js/control-panel.js'></script>
     <script type='text/javascript' src='js/flow-file.js'></script>
     <script type='text/javascript' src='js/processor.js'></script>
+    <script type='text/javascript' src='js/arrow.js'></script>
 </head>
 
 <body>
@@ -21,6 +22,14 @@
         <i id="diagram-last" class="fa fa-angle-double-right"></i>
     </div>
 
+    <svg id="diagram-svg" width="600px" height="600px">
+        <defs>
+            <marker id='head' orient="auto" markerWidth='2' markerHeight='4' refX='0.1' refY='2'>
+                <!-- triangle pointing right (+x) -->
+                <path d='M0,0 V4 L2,2 Z' fill="black" />
+            </marker>
+        </defs>
+    </svg>
     <div id='diagram-container'></div>
     <script language='javascript'>
         var f1 = {
@@ -38,11 +47,11 @@
         };
 
         var f2 = {
-            position: { x: 20, y: 500 },
-            id: '2',
+            position: { x: 20, y: 440 },
+            id: '1',
             attributes: [
                 {name: 'a', value: 'one'},
-                {name: 'b', value: 'two'}
+                {name: 'updatedAttr', value: 'ONE', highlight: true}
             ],
             content: {
                 type: 'text',
@@ -58,15 +67,30 @@
             name: 'UpdateAttribute',
             properties: [
                 {
-                    name: 'updateAttributeName1',
-                    value: '${now()}'
+                    name: 'updatedAttr',
+                    value: '${a:toUpper()}'
                 }
             ],
             showDetails: true
         }
 
+        var a1 = {
+            points: [
+                {x: 140, y: 160},
+                {x: 140, y: 210}
+            ]
+        };
+
+        var a2 = {
+            points: [
+                {x: 140, y: 320},
+                {x: 140, y: 400}
+            ]
+        };
+
         var flowFiles = [];
         var processors = [];
+        var arrows = [];
 
         var diagramSequence = {
             index: 0,
@@ -74,12 +98,16 @@
                 () => {
                     flowFiles = [f1];
                     processors = [p1];
+                    arrows = [a1];
                     flowFile.render(flowFiles);
                     processor.render(processors);
+                    arrow.render(arrows);
                 },
                 () => {
                     flowFiles.push(f2);
+                    arrows.push(a2);
                     flowFile.render(flowFiles);
+                    arrow.render(arrows);
                 }
             ]
         }

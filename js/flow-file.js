@@ -80,6 +80,7 @@ var flowFile = {
             newAttributes.append('td');
 
             [exAttributes, newAttributes].forEach(attribute => {
+                attribute.transition().style('background-color', d => d.highlight ? '#E1DC88' : 'white');
                 attribute.selectAll('td').data(d => [d.name, d.value]).text(d => d);
             });
 
