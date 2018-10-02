@@ -1,25 +1,17 @@
-var processor = {
-    toId: d => `processor_${d.id}`,
+class Processor extends HTMLRenderable {
+    constructor(id, name) {
+        super(id);
+        this.name = name;
+    }
 
-    calculateBoundingBox: d => {
-        return common.calculateBoundingBox(d, processor.toId);
-    },
+    toId() {
+        return `processor_${this.id}`;
+    }
 
-    render: processors => {
-        var diagram = d3.select('#diagram-container');
+    setupContainer(container) {
+        container.classed('processor', true);
 
-        // Select existing ones
-        var exContainer = diagram
-            .selectAll('.processor')
-            .data(processors);
-
-        // Create new ones
-        var newContainer = exContainer.enter()
-            .append('div')
-            .attr('id', d => `processor_${d.id}`)
-            .classed('processor', true);
-
-        newContainer.append('div')
+        container.append('div')
             .classed('processor-name', true)
             .text(d => d.name)
             .on('click', d => {
@@ -28,47 +20,41 @@ var processor = {
                 processor.render(processors);
             });
 
-        // Remove deleted ones
-        exContainer.exit().remove();
-
         // Create properties place-holder
-        newContainer.append('div').text('Properties').classed('data-label', true);
-        var propertiesTable = newContainer.append('table')
+        container.append('div').text('Properties').classed('data-label', true);
+        var propertiesTable = container.append('table')
             .append('tbody')
             .classed('processor-properties', true);
         var propertyHeader = propertiesTable.append('tr');
         propertyHeader.append('th').text('name');
         propertyHeader.append('th').text('value');
+    }
 
-        // Common rendering logic for existing and new ones.
-        [exContainer, newContainer].forEach(container => {
-            // Update positions.
-            container
-                .style('left', d => `${d.position.x}px`)
-                .style('top', d => `${d.position.y}px`);
+    renderContainer(container) {
+        // Update positions.
+        container
+            .style('left', d => `${d.position.x}px`)
+            .style('top', d => `${d.position.y}px`);
 
-            // Show data labels.
-            container.selectAll('.data-label')
-                .style('display', d => d.showDetails ? 'block' : 'none')
+        // Show data labels.
+        container.selectAll('.data-label')
+            .style('display', d => d.showDetails ? 'block' : 'none')
 
-            // Render properties.
-            var properties = container.select('.processor-properties')
-                .style('display', d => d.properties && d.properties.length > 0 && d.showDetails ? 'block' : 'none');
+        // Render properties.
+        var properties = container.select('.processor-properties')
+            .style('display', d => d.properties && d.properties.length > 0 && d.showDetails ? 'block' : 'none');
 
-            var exProperties = properties
-                .selectAll('.processor-property')
-                .data(d => d.properties ? d.properties : [])
-            var newProperties = exProperties.enter()
-                .append('tr')
-                .classed('processor-property', true);
-            newProperties.append('td');
-            newProperties.append('td');
+        var exProperties = properties
+            .selectAll('.processor-property')
+            .data(d => d.properties ? d.properties : [])
+        var newProperties = exProperties.enter()
+            .append('tr')
+            .classed('processor-property', true);
+        newProperties.append('td');
+        newProperties.append('td');
 
-            [exProperties, newProperties].forEach(property => {
-                property.selectAll('td').data(d => [d.name, d.value]).text(d => d);
-            });
+        [exProperties, newProperties].forEach(property => {
+            property.selectAll('td').data(d => [d.name, d.value]).text(d => d);
         });
-
-        
     }
 }

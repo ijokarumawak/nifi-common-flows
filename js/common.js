@@ -3,8 +3,8 @@ var common = {
         return `translate(${d.transform.x}, ${d.transform.y}) rotate(${d.transform.r})`;
     },
 
-    calculateBoundingBox: (d, toId) => {
-        var container = document.getElementById(toId(d));
+    bbox: (d) => {
+        var container = document.getElementById(d.toId());
         var style = window.getComputedStyle(container);
         var height = container.scrollHeight
             + Number.parseInt(style.borderTopWidth)

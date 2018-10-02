@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type='text/javascript' src='https://d3js.org/d3.v5.min.js'></script>
     <script type='text/javascript' src='js/common.js'></script>
+    <script type='text/javascript' src='js/renderable.js'></script>
     <script type='text/javascript' src='js/control-panel.js'></script>
     <script type='text/javascript' src='js/flow-file.js'></script>
     <script type='text/javascript' src='js/processor.js'></script>
@@ -34,90 +35,60 @@
     </div>
 
     <script language='javascript'>
-        var f1_1 = {
-            position: { x: 20, y: 50 },
-            id: '1',
-            seq: '1',
-            attributes: [
-                {name: 'a', value: 'one'}
-            ],
-            content: {
-                type: 'text',
-                value: 'Hello world'
-            },
-            showData: true,
-            showAttributes: true
+        var f1_1 = new FlowFile('1', 1);
+        f1_1.position = { x: 20, y: 50 };
+        f1_1.attributes = [{name: 'a', value: 'one'}];
+        f1_1.content = {
+            type: 'text',
+            value: 'Hello world'
         };
+        f1_1.showData = true;
+        f1_1.showAttributes = true;
 
-        var f1_2 = {
-            position: { x: 20, y: 440 },
-            id: '1',
-            seq: '2',
-            attributes: [
-                {name: 'a', value: 'one'},
-                {name: 'updatedAttr', value: 'ONE', highlight: true}
-            ],
-            content: {
-                type: 'text',
-                value: 'Hello world II'
-            },
-            showData: true,
-            showAttributes: true
+        var f1_2 = new FlowFile('1', 2);
+        f1_2.position = { x: 20, y: 440 };
+        f1_2.attributes = [
+            {name: 'a', value: 'one'},
+            {name: 'updatedAttr', value: 'ONE', highlight: true}
+        ];
+        f1_2.content = {
+            type: 'text',
+            value: 'Hello world'
         };
+        f1_2.showData = true;
+        f1_2.showAttributes = true;
 
-        var p1 = {
-            position: { x: 300, y: 250 },
-            id: '1',
-            name: 'UpdateAttribute',
-            properties: [
-                {
-                    name: 'updatedAttr',
-                    value: '${a:toUpper()}'
-                }
-            ],
-            showDetails: true
-        }
+        var p1 = new Processor('1', 'UpdateAttribute');
+        p1.position = { x: 300, y: 250 };
+        p1.properties = [
+            {
+                name: 'updatedAttr',
+                value: '${a:toUpper()}'
+            }
+        ];
+        p1.showDetails = true;
 
-        var flowFiles = [];
-        var processors = [];
-        var arrows = [];
+        var a1 = new Arrow('1', f1_1, p1);
+        var a2 = new Arrow('2', p1, f1_2);
 
-        var diagramSequence = {
+        var diagram = {
             index: 0,
             actions: [
                 () => {
-                    flowFiles = [f1_1];
-                    processors = [p1];
-                    flowFile.render(flowFiles);
-                    processor.render(processors);
+                    f1_1.render();
+                    p1.render();
+                    a1.render();
 
-                    var a1 = {
-                        targets: [
-                            flowFile.calculateBoundingBox(f1_1),
-                            processor.calculateBoundingBox(p1)
-                        ]
-                    };
-
-                    arrows = [a1];
-                    arrow.render(arrows);
+                    f1_2.hide();
+                    a2.hide();
                 },
                 () => {
-                    flowFiles.push(f1_2);
-                    flowFile.render(flowFiles);
-
-                    var a2 = {
-                        targets: [
-                            processor.calculateBoundingBox(p1),
-                            flowFile.calculateBoundingBox(f1_2)
-                        ]
-                    };
-
-                    arrows.push(a2);
-                    arrow.render(arrows);
+                    f1_2.render();
+                    a2.render();
                 }
             ]
         }
-        controlPanel.render(diagramSequence);
+        controlPanel.render(diagram);
 
     </script>
     </div>

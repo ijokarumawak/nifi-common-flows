@@ -1,35 +1,35 @@
 var controlPanel = {
-    render: diagramSequence => {
+    render: diagram => {
 
         d3.select('#diagram-index')
-            .text(`${diagramSequence.index + 1} / ${diagramSequence.actions.length}`);
+            .text(`${diagram.index + 1} / ${diagram.actions.length}`);
 
         d3.select('#diagram-first')
             .on('click', () => {
-                diagramSequence.index = 0;
-                controlPanel.render(diagramSequence);
+                diagram.index = 0;
+                controlPanel.render(diagram);
             })
 
         d3.select('#diagram-previous')
             .on('click', () => {
-                diagramSequence.index = Math.max(diagramSequence.index - 1, 0);
-                controlPanel.render(diagramSequence);
+                diagram.index = Math.max(diagram.index - 1, 0);
+                controlPanel.render(diagram);
             })
 
         d3.select('#diagram-next')
             .on('click', () => {
-                diagramSequence.index = Math.min(diagramSequence.index + 1, diagramSequence.actions.length - 1);
-                controlPanel.render(diagramSequence);
+                diagram.index = Math.min(diagram.index + 1, diagram.actions.length - 1);
+                controlPanel.render(diagram);
             })
 
         d3.select('#diagram-last')
             .on('click', () => {
-                diagramSequence.index = diagramSequence.actions.length - 1;
-                controlPanel.render(diagramSequence);
+                diagram.index = diagram.actions.length - 1;
+                controlPanel.render(diagram);
             })
 
 
-        diagramSequence.actions[diagramSequence.index]();
+        diagram.actions[diagram.index]();
         
     }
 }
