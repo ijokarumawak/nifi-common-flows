@@ -1,8 +1,15 @@
+.hidden {
+    display: none;
+}
+
 body {
     font-family: Arial;
+    padding: 0px;
+    margin: 0px;
 }
 
 table {
+    width: 100%;
     border-spacing: 0px;
     border-collapse: separate;
 }
@@ -24,16 +31,54 @@ th {
     border-color: #C7C7C7;
 }
 
+#flow-diagram {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+#left-pane {
+    border-right: 1px solid grey;
+    padding-left: 10px;
+    padding-right: 30px;
+}
+
+#right-pane {
+    flex-grow: 1;
+}
+
+#diagram-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid grey;
+}
+
+#diagram-title {
+    padding-left: 10px;
+    margin-bottom: 5px;
+}
+
+#control-panel {
+    align-self: flex-end;
+    font-size: larger;
+    padding-left: 10px;
+    padding-bottom: 5px;
+}
+
+#diagram-body {
+    display: flex;
+    flex-direction: row;
+}
+
 #diagram-container {
     position: relative;
     top: 0px;
     left: 0px;
     background-color: white;
+    flex-grow: 1;
 }
 
-#control-panel {
-    font-size: larger;
-}
 
 .data-label {
     padding-top: 5px;
@@ -47,15 +92,21 @@ th {
 .flow-file {
     background-color: white;
     border: 3px solid #6B825E;
+    border-radius: 20px;
     box-shadow: 5px 5px 3px #C3C3C7;
     position: absolute;
 }
 
 .flow-file-id {
     padding: 8px;
+    border-radius: 16px 16px 0px 0px;
     font-weight: bolder;
-    background-color: #92B281;
+    background-color: #A3A3A3;
     color: #FAFAFA;
+}
+
+.flow-file-id-highlight {
+    background-color: #8EBE70;    
 }
 
 .flow-file-content {
@@ -73,6 +124,28 @@ th {
     font-family: Arial;
     font-weight: bolder;
     padding: 8px;
-    background-color: #409CB4;
+    background-color: #A3A3A3;
     color: #FAFAFA;
+}
+
+.processor-name-highlight {
+    background-color: #409CB4;
+}
+
+.controller-service {
+    background-color: white;
+    border: 2px solid #577077;
+    border-top: 0px;
+}
+
+.controller-service-name {
+    font-family: Arial;
+    font-weight: bolder;
+    padding: 8px;
+    background-color: #A3A3A3;
+    color: #FAFAFA;
+}
+
+.controller-service-name-highlight {
+    background-color: #409CB4;
 }

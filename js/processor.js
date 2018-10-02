@@ -36,13 +36,17 @@ class Processor extends HTMLRenderable {
             .style('left', d => `${d.position.x}px`)
             .style('top', d => `${d.position.y}px`);
 
+        // Highlight name.
+        container.select('.processor-name')
+            .classed('processor-name-highlight', d => d.highlight);
+
         // Show data labels.
         container.selectAll('.data-label')
             .style('display', d => d.showDetails ? 'block' : 'none')
 
         // Render properties.
         var properties = container.select('.processor-properties')
-            .style('display', d => d.properties && d.properties.length > 0 && d.showDetails ? 'block' : 'none');
+            .style('display', d => d.properties && d.properties.length > 0 && d.showDetails ? 'table-row-group' : 'none');
 
         var exProperties = properties
             .selectAll('.processor-property')
@@ -55,6 +59,12 @@ class Processor extends HTMLRenderable {
 
         [exProperties, newProperties].forEach(property => {
             property.selectAll('td').data(d => [d.name, d.value]).text(d => d);
+            property.transition().style('background-color', d => d.highlight ? '#F6EA64' : 'white');
         });
     }
+
+    highlightProperties(names) {
+        this.properties.forEach(property => property.highlight = names.includes(property.name));
+    }
+
 }

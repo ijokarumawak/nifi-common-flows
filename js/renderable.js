@@ -1,3 +1,4 @@
+var renderedObjects = [];
 class Renderable {
     constructor(id) {
         this.id = id;
@@ -24,6 +25,9 @@ class Renderable {
     }
     
     render() {
+        // Track this one
+        renderedObjects[this.toId()] = this;
+
         // Select existing ones
         var exContainer = this.selectContainer();
 
@@ -36,14 +40,28 @@ class Renderable {
 
     }
 
+    getParentElementId() {
+        return 'diagram-container';
+    }
+
+    selectContainer() {
+        var parent = d3.select(`#${this.getParentElementId()}`);
+
+        // Select existing ones
+        var exContainer = parent
+            .selectAll(`#${this.toId()}`)
+            .data([this]);
+
+        return exContainer;
+    }
+
     hide() {
         // Delete existing ones
-        var diagram = d3.select('#diagram-container');
+        var diagram = d3.select(`#${this.getParentElementId()}`);
         var exContainer = diagram
             .selectAll(`#${this.toId()}`)
             .remove();
     }
-
 
     /**
      * Subclasses should implement this method.
@@ -63,15 +81,9 @@ class Renderable {
 }
 
 class HTMLRenderable extends Renderable {
-    selectContainer() {
-        var parent = d3.select('#diagram-container');
 
-        // Select existing ones
-        var exContainer = parent
-            .selectAll(`#${this.toId()}`)
-            .data([this]);
-
-        return exContainer;
+    getParentElementId() {
+        return 'diagram-container';
     }
 
     createNewContainer(exContainer) {
@@ -82,15 +94,9 @@ class HTMLRenderable extends Renderable {
 }
 
 class SVGRenderable extends Renderable {
-    selectContainer() {
-        var parent = d3.select('#diagram-svg');
 
-        // Select existing ones
-        var exContainer = parent
-            .selectAll(`#${this.toId()}`)
-            .data([this]);
-
-        return exContainer;
+    getParentElementId() {
+        return 'diagram-svg';
     }
 
     createNewContainer(exContainer) {

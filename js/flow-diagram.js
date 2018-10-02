@@ -37,6 +37,51 @@ class FlowDiagram {
                 this.render();
             })
 
-        this.actions[this.index]();
+        var a = this.actions[this.index];
+        // Execute custom action.
+        if (typeof a.action === 'function') {
+            a.action();
+        }
+
+        // Render new objects.
+        if (typeof a.render !== 'undefined') {
+            a.render.forEach(o => o.render());
+        }
+
+        // Highlihgt objects.
+        if (typeof a.highlight !== 'undefined') {
+            this.highlightObjects(a.highlight.flowFiles, 'FlowFile');
+            this.highlightObjects(a.highlight.processors, 'Processor');
+            this.highlightObjects(a.highlight.controllerServices, 'ControllerService');
+        } else {
+            this.clearHighlight();
+        }
+
+        // Refresh rendered objects.
+        this.refresh();
+    }
+
+    clearHighlight() {
+        for (var k in renderedObjects) {
+            var o = renderedObjects[k];
+            o.highlight = false;
+        }
+    }
+
+    highlightObjects(targets, className) {
+        var ids = typeof targets !== 'undefined' ? targets.map(t => t.toId()) : [];
+        for (var k in renderedObjects) {
+            var o = renderedObjects[k];
+            if (o.constructor.name === className) {
+                o.highlight = ids.includes(o.toId());
+            }
+        }
+    }
+
+    refresh() {
+        for (var k in renderedObjects) {
+            var o = renderedObjects[k];
+            o.render();
+        }
     }
 }

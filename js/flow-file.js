@@ -13,7 +13,7 @@ class FlowFile extends HTMLRenderable {
 
         container.append('div')
             .classed('flow-file-id', true)
-            .text(d => d.id)
+            .text(d => `${d.id}.${d.seq}`)
             .on('click', d => {
                 if (d.showData === true) {
                     d.showData = false;
@@ -56,13 +56,17 @@ class FlowFile extends HTMLRenderable {
             .style('left', d => `${d.position.x}px`)
             .style('top', d => `${d.position.y}px`);
 
+        // Highlight name.
+        container.select('.flow-file-id')
+            .classed('flow-file-id-highlight', d => d.highlight);
+
         // Show data labels.
         container.selectAll('.data-label')
             .style('display', d => d.showData ? 'block' : 'none')
 
         // Render attributes.
         var attributes = container.select('.flow-file-attributes')
-            .style('display', d => d.showAttributes ? 'block' : 'none');
+            .style('display', d => d.showAttributes ? 'table-row-group' : 'none');
 
         var exAttributes = attributes
             .selectAll('.flow-file-attribute')
@@ -79,8 +83,27 @@ class FlowFile extends HTMLRenderable {
         });
 
         // Render content.
-        container.select('.flow-file-content')
-            .style('display', d => d.showContent ? 'block' : 'none')
-            .text(d => d.content.value);
+        var contentContainer = container.select('.flow-file-content')
+            .style('display', d => d.showContent ? 'block' : 'none');
+        if (this.content) {
+            switch (typeof this.content.value) {
+                case 'string':
+                    contentContainer.text(d => d.content.value);
+                    break;
+                case 'function':
+                    this.content.value(contentContainer);
+                    break;
+                case 'object':
+                    if (Array.isArray(this.content.value)) {
+                        contentContainer.selectAll('div')
+                            .data(this.content.value)
+                            .text(d => d)
+                            .enter()
+                            .append('div')
+                            .text(d => d);
+                    }
+                    break;
+            }
+        }
     }
 }

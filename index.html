@@ -10,32 +10,95 @@
     <script type='text/javascript' src='js/flow-diagram.js'></script>
     <script type='text/javascript' src='js/flow-file.js'></script>
     <script type='text/javascript' src='js/processor.js'></script>
+    <script type='text/javascript' src='js/controller-service.js'></script>
     <script type='text/javascript' src='js/arrow.js'></script>
 </head>
 
 <body>
-    <h1 id="diagram-title"></h1>
-    <div id="control-panel">
-        <i id="diagram-first" class="fa fa-angle-double-left"></i>
-        <i id="diagram-previous" class="fa fa-angle-left"></i>
-        <span id="diagram-index"></span>
-        <i id="diagram-next" class="fa fa-angle-right"></i>
-        <i id="diagram-last" class="fa fa-angle-double-right"></i>
+    <div id="flow-diagram">
+        <div id="left-pane">
+            <h3>Data Flow Patterns</h3>
+            <div id="diagram-navi"></div>
+        </div>
+        <div id="right-pane">
+            <div id="diagram-header">
+                <div>
+                    <h1 id="diagram-title">Apache NiFi Data Flow Patterns</h1>
+                    <div id="control-panel" style="visibility: hidden;">
+                        <i id="diagram-first" class="fa fa-angle-double-left"></i>
+                        <i id="diagram-previous" class="fa fa-angle-left"></i>
+                        <span id="diagram-index"></span>
+                        <i id="diagram-next" class="fa fa-angle-right"></i>
+                        <i id="diagram-last" class="fa fa-angle-double-right"></i>
+                    </div>
+                </div>
+                <div>Show diagram meta data here</div>
+            </div>
+            <div id="diagram-body">
+                <div id='diagram-container'>
+                    <svg id="diagram-svg" width="600px" height="600px">
+                        <defs>
+                            <marker id='head' orient="auto" markerWidth='2' markerHeight='4' refX='2' refY='2'>
+                                <path d='M0,0 V4 L2,2 Z' fill="#AEBAA7" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+                <div id="controller-services" style="display: none">
+                    Controller Services
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id='diagram-container'>
-        <svg id="diagram-svg" width="600px" height="600px">
-            <defs>
-                <marker id='head' orient="auto" markerWidth='2' markerHeight='4' refX='2' refY='2'>
-                    <path d='M0,0 V4 L2,2 Z' fill="#AEBAA7" />
-                </marker>
-            </defs>
-        </svg>
+    <script>
 
-    </div>
+        console.log(d3.select('#control-panel'));
 
+        var adjustSVGSize = () => {
+            d3.select('#diagram-svg')
+            .attr('height', window.innerHeight - document.getElementById('diagram-header').scrollHeight - 5);
+        }
+        adjustSVGSize();
+        window.addEventListener('resize', adjustSVGSize);
 
-    <script src="diagrams/ReplaceText.js"></script>
+        d3.json('diagrams/index.json').then(diagrams => {
+            d3.select('#diagram-navi')
+                .append('ol')
+                .selectAll('li')
+                .data(diagrams)
+                .enter()
+                .append('li')
+                .on('click', d => {
+                    // Show hidden items.
+                    d3.select('#control-panel').style('visibility', 'visible');
+
+                    // Hide optional items.
+                    d3.select('#controller-services').style('display', 'none');
+
+                    // Discard all rendered objects.
+                    for(var k in renderedObjects) {
+                        renderedObjects[k].hide();
+                    };
+
+                    // Remove old one first.
+                    d3.select('#diagram-script')
+                        .selectAll('script')
+                        .remove();
+
+                    // Add new script tag.
+                    d3.select('#diagram-script')
+                        .selectAll('script')
+                        .data([d])
+                        .enter()
+                        .append('script')
+                        .attr('src', `diagrams/${d.name}.js`);
+                })
+                .text(d => d.name);
+        });
+    </script>
+
+    <div id="diagram-script"></div>
 </body>
 
 </html>

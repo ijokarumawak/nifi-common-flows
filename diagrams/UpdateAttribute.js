@@ -36,6 +36,8 @@ var a2 = new Arrow('2', p1, f1_2);
 
 var diagram = new FlowDiagram('Update FlowFile Attribute', 0, [
     () => {
+        f1_1.latest = true;
+        f1_2.latest = false;
         f1_1.render();
         p1.render();
         a1.render();
@@ -44,6 +46,9 @@ var diagram = new FlowDiagram('Update FlowFile Attribute', 0, [
         a2.hide();
     },
     () => {
+        f1_1.latest = false;
+        f1_2.latest = true;
+        f1_1.render();
         f1_2.render();
         a2.render();
     }
