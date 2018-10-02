@@ -1,4 +1,10 @@
 var flowFile = {
+    toId: d => `flow-file_${d.id}_${d.seq}`,
+
+    calculateBoundingBox: d => {
+        return common.calculateBoundingBox(d, flowFile.toId);
+    },
+
     render: flowFiles => {
         var diagram = d3.select('#diagram-container');
 
@@ -13,6 +19,7 @@ var flowFile = {
         // Create new ones
         var newContainer = exContainer.enter()
             .append('div')
+            .attr('id', flowFile.toId)
             .classed('flow-file', true);
 
         newContainer.append('div')

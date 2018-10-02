@@ -1,4 +1,10 @@
 var processor = {
+    toId: d => `processor_${d.id}`,
+
+    calculateBoundingBox: d => {
+        return common.calculateBoundingBox(d, processor.toId);
+    },
+
     render: processors => {
         var diagram = d3.select('#diagram-container');
 
@@ -10,6 +16,7 @@ var processor = {
         // Create new ones
         var newContainer = exContainer.enter()
             .append('div')
+            .attr('id', d => `processor_${d.id}`)
             .classed('processor', true);
 
         newContainer.append('div')

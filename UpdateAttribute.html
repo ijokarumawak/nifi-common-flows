@@ -14,27 +14,30 @@
 </head>
 
 <body>
-    <div id="control-panel">
-        <i id="diagram-first" class="fa fa-angle-double-left"></i>
-        <i id="diagram-previous" class="fa fa-angle-left"></i>
-        <span id="diagram-index"></span>
-        <i id="diagram-next" class="fa fa-angle-right"></i>
-        <i id="diagram-last" class="fa fa-angle-double-right"></i>
+    <div id='diagram-container'>
+        <svg id="diagram-svg" width="600px" height="600px">
+            <defs>
+                <marker id='head' orient="auto" markerWidth='2' markerHeight='4' refX='0.1' refY='2'>
+                    <!-- triangle pointing right (+x) -->
+                    <path d='M0,0 V4 L2,2 Z' fill="#AEBAA7" />
+                </marker>
+            </defs>
+        </svg>
+        <div id="control-panel">
+            <i id="diagram-first" class="fa fa-angle-double-left"></i>
+            <i id="diagram-previous" class="fa fa-angle-left"></i>
+            <span id="diagram-index"></span>
+            <i id="diagram-next" class="fa fa-angle-right"></i>
+            <i id="diagram-last" class="fa fa-angle-double-right"></i>
+        </div>
+    
     </div>
 
-    <svg id="diagram-svg" width="600px" height="600px">
-        <defs>
-            <marker id='head' orient="auto" markerWidth='2' markerHeight='4' refX='0.1' refY='2'>
-                <!-- triangle pointing right (+x) -->
-                <path d='M0,0 V4 L2,2 Z' fill="black" />
-            </marker>
-        </defs>
-    </svg>
-    <div id='diagram-container'></div>
     <script language='javascript'>
-        var f1 = {
+        var f1_1 = {
             position: { x: 20, y: 50 },
             id: '1',
+            seq: '1',
             attributes: [
                 {name: 'a', value: 'one'}
             ],
@@ -46,9 +49,10 @@
             showAttributes: true
         };
 
-        var f2 = {
+        var f1_2 = {
             position: { x: 20, y: 440 },
             id: '1',
+            seq: '2',
             attributes: [
                 {name: 'a', value: 'one'},
                 {name: 'updatedAttr', value: 'ONE', highlight: true}
@@ -62,7 +66,7 @@
         };
 
         var p1 = {
-            position: { x: 20, y: 250 },
+            position: { x: 300, y: 250 },
             id: '1',
             name: 'UpdateAttribute',
             properties: [
@@ -74,20 +78,6 @@
             showDetails: true
         }
 
-        var a1 = {
-            points: [
-                {x: 140, y: 160},
-                {x: 140, y: 210}
-            ]
-        };
-
-        var a2 = {
-            points: [
-                {x: 140, y: 320},
-                {x: 140, y: 400}
-            ]
-        };
-
         var flowFiles = [];
         var processors = [];
         var arrows = [];
@@ -96,17 +86,33 @@
             index: 0,
             actions: [
                 () => {
-                    flowFiles = [f1];
+                    flowFiles = [f1_1];
                     processors = [p1];
-                    arrows = [a1];
                     flowFile.render(flowFiles);
                     processor.render(processors);
+
+                    var a1 = {
+                        targets: [
+                            flowFile.calculateBoundingBox(f1_1),
+                            processor.calculateBoundingBox(p1)
+                        ]
+                    };
+
+                    arrows = [a1];
                     arrow.render(arrows);
                 },
                 () => {
-                    flowFiles.push(f2);
-                    arrows.push(a2);
+                    flowFiles.push(f1_2);
                     flowFile.render(flowFiles);
+
+                    var a2 = {
+                        targets: [
+                            processor.calculateBoundingBox(p1),
+                            flowFile.calculateBoundingBox(f1_2)
+                        ]
+                    };
+
+                    arrows.push(a2);
                     arrow.render(arrows);
                 }
             ]
