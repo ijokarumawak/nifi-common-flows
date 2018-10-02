@@ -4,7 +4,23 @@ class Renderable {
     }
 
     bbox() {
-        return common.bbox(this);
+        var container = document.getElementById(this.toId());
+        var style = window.getComputedStyle(container);
+        var height = container.scrollHeight
+            + Number.parseInt(style.borderTopWidth)
+            + Number.parseInt(style.borderBottomWidth);
+        var width = container.scrollWidth
+            + Number.parseInt(style.borderLeftWidth)
+            + Number.parseInt(style.borderRightWidth);
+        var box = {
+                x: this.position.x,
+                y: this.position.y,
+                h: height,
+                w: width,
+                cx: this.position.x + (width / 2),
+                cy: this.position.y + (height / 2)
+            }
+        return box;
     }
     
     render() {

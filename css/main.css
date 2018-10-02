@@ -25,16 +25,13 @@ th {
 }
 
 #diagram-container {
-    position: absolute;
+    position: relative;
     top: 0px;
     left: 0px;
     background-color: white;
 }
 
 #control-panel {
-    position: absolute;
-    top: 0px;
-    left: 0px;
     font-size: larger;
 }
 

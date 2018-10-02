@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <title>FlowFiles</title>
+    <link rel='stylesheet' type='text/css' href='css/main.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type='text/javascript' src='https://d3js.org/d3.v5.min.js'></script>
+    <script type='text/javascript' src='js/renderable.js'></script>
+    <script type='text/javascript' src='js/flow-diagram.js'></script>
+    <script type='text/javascript' src='js/flow-file.js'></script>
+    <script type='text/javascript' src='js/processor.js'></script>
+    <script type='text/javascript' src='js/arrow.js'></script>
+</head>
+
+<body>
+    <h1 id="diagram-title"></h1>
+    <div id="control-panel">
+        <i id="diagram-first" class="fa fa-angle-double-left"></i>
+        <i id="diagram-previous" class="fa fa-angle-left"></i>
+        <span id="diagram-index"></span>
+        <i id="diagram-next" class="fa fa-angle-right"></i>
+        <i id="diagram-last" class="fa fa-angle-double-right"></i>
+    </div>
+
+    <div id='diagram-container'>
+        <svg id="diagram-svg" width="600px" height="600px">
+            <defs>
+                <marker id='head' orient="auto" markerWidth='2' markerHeight='4' refX='2' refY='2'>
+                    <path d='M0,0 V4 L2,2 Z' fill="#AEBAA7" />
+                </marker>
+            </defs>
+        </svg>
+
+    </div>
+
+
+    <script src="diagrams/ReplaceText.js"></script>
+</body>
+
+</html>
