@@ -54,4 +54,11 @@ class ControllerService extends HTMLRenderable {
             property.selectAll('td').data(d => [d.name, d.value]).text(d => d);
         });
     }
+
+    setHighlight(spec) {
+        this.highlight = typeof spec !== undefined && spec != null;
+
+        this.properties.forEach(property => property.highlight
+             = spec && spec.properties && spec.properties.includes(property.name));
+    }
 }

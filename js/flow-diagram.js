@@ -43,45 +43,56 @@ class FlowDiagram {
             a.action();
         }
 
-        // Render new objects.
-        if (typeof a.render !== 'undefined') {
-            a.render.forEach(o => o.render());
-        }
-
         // Highlihgt objects.
-        if (typeof a.highlight !== 'undefined') {
-            this.highlightObjects(a.highlight.flowFiles, 'FlowFile');
-            this.highlightObjects(a.highlight.processors, 'Processor');
-            this.highlightObjects(a.highlight.controllerServices, 'ControllerService');
-        } else {
-            this.clearHighlight();
+        // Find highlight spec, if not defined at the current action, seek backward.
+        var highlightSpec;
+        for (var i = this.index; i >= 0 && typeof highlightSpec === 'undefined'; i--) {
+            highlightSpec = this.actions[i].highlight;
         }
 
-        // Refresh rendered objects.
-        this.refresh();
-    }
+        if (typeof highlightSpec === 'undefined') {
+            // Use empty spec to clear all highlights.
+            highlightSpec = {};
+        }
+        this.highlightObjects(highlightSpec.flowFiles, 'FlowFile');
+        this.highlightObjects(highlightSpec.processors, 'Processor');
+        this.highlightObjects(highlightSpec.controllerServices, 'ControllerService');
 
-    clearHighlight() {
+        // Finally update the diagram.
+        // Find render spec, if not defined at the current action, seek backward.
+        var renderSpec;
+        for (var i = this.index; i >= 0 && typeof renderSpec === 'undefined'; i--) {
+            renderSpec = this.actions[i].render;
+        }
+
+        // Remove unspecified ones.
+        var ids = renderSpec.map(d => d.toId());
         for (var k in renderedObjects) {
             var o = renderedObjects[k];
-            o.highlight = false;
-        }
+            if (!ids.includes(o.toId())) {
+                o.hide();
+            }
+        }                
+
+        // Render specific objects.
+        renderSpec.forEach(o => o.render());
+
     }
 
-    highlightObjects(targets, className) {
-        var ids = typeof targets !== 'undefined' ? targets.map(t => t.toId()) : [];
+    highlightObjects(_targets, className) {
+        // Convert array to object so that targets can be found by its id.
+        var targets = {};
+        if (typeof _targets !== 'undefined') {
+            _targets.forEach(t => targets[t.d.toId()] = t);
+        }
+
         for (var k in renderedObjects) {
             var o = renderedObjects[k];
             if (o.constructor.name === className) {
-                o.highlight = ids.includes(o.toId());
+                var spec = targets[o.toId()];
+                o.setHighlight(spec);
             }
         }
     }
 
-    refresh() {
-        for (var k in renderedObjects) {
-            var o = renderedObjects[k];
-            o.render();
-        }
-    }
 }

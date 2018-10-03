@@ -78,6 +78,13 @@ class Renderable {
      */
     renderContainer(container) {
     }
+
+    /**
+     * Subclasses can implement class-specific highlight logic.
+     * @param {*} spec 
+     */
+    setHighlight(spec) {
+    }
 }
 
 class HTMLRenderable extends Renderable {

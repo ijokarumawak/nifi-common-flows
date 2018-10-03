@@ -67,75 +67,55 @@ cs2.properties = [
     }
 ];
 
-// var diagram = new FlowDiagram('ConvertRecord', 0, [
-//     () => {
-//         f1_1.render();
-//         p1.render();
-//         a1.render();
-
-//         cs1.render();
-//         cs2.render();
-
-//         f1_2.hide();
-//         a2.hide();
-//     },
-//     () => {
-//         diagram.highlightFlowFiles([f1_1]);
-//     },
-//     () => {
-//         p1.highlightProperties(['Record Reader']);
-//         diagram.highlightProcessors([p1]);
-//         diagram.highlightControllerServices([cs1]);
-//     },
-//     () => {
-//         p1.highlightProperties(['Record Writer']);
-//         diagram.highlightControllerServices([cs2]);
-//     },
-//     () => {
-//         f1_2.render();
-//         a2.render();
-//         diagram.highlightFlowFiles([f1_2]);
-//     }
-// ]);
-
 var diagram = new FlowDiagram('ConvertRecord', 0, [
+    {
+        render: [f1_1]
+    },
     {
         render: [f1_1, p1, a1]
     },
     {
         highlight: {
-            flowFiles: [f1_1]
+            flowFiles: [
+                {d: f1_1}
+            ]
         }
     },
     {
         highlight: {
-            processors: [p1]
-        },
-        action: () => {
-            p1.highlightProperties(['Record Reader']);
+            processors: [
+                {d: p1, properties: ['Record Reader']}
+            ]
         }
     },
     {
-        render: [cs1],
+        render: [f1_1, p1, a1, cs1],
         highlight: {
-            processors: [p1],
-            controllerServices: [cs1]
+            processors: [
+                {d: p1, properties: ['Record Reader']}
+            ],
+            controllerServices: [
+                {d: cs1}
+            ]
         }
     },
     {
-        render: [cs2],
+        render: [f1_1, p1, a1, cs1, cs2],
         highlight: {
-            processors: [p1],
-            controllerServices: [cs2]
-        },
-        action: () => {
-            p1.highlightProperties(['Record Writer']);
+            processors: [
+                {d: p1, properties: ['Record Writer']}
+            ],
+            controllerServices: [
+                {d: cs2}
+            ]
         }
     },
     {
-        render: [f1_2, a2],
+        render: [f1_1, p1, a1, cs1, cs2, f1_2, a2],
         highlight: {
-            flowFiles: [f1_2]
+            flowFiles: [
+                {d: f1_2}
+            ]
         }
     }
 ]);

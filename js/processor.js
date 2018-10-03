@@ -63,8 +63,10 @@ class Processor extends HTMLRenderable {
         });
     }
 
-    highlightProperties(names) {
-        this.properties.forEach(property => property.highlight = names.includes(property.name));
-    }
+    setHighlight(spec) {
+        this.highlight = typeof spec !== undefined && spec != null;
 
+        this.properties.forEach(property => property.highlight
+             = spec && spec.properties && spec.properties.includes(property.name));
+    }
 }

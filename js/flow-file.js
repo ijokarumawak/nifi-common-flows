@@ -106,4 +106,11 @@ class FlowFile extends HTMLRenderable {
             }
         }
     }
+
+    setHighlight(spec) {
+        this.highlight = typeof spec !== undefined && spec != null;
+
+        this.attributes.forEach(attribute => attribute.highlight
+             = spec && spec.attributes && spec.attributes.includes(attribute.name));
+    }
 }
