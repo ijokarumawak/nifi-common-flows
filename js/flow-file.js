@@ -11,7 +11,7 @@ class FlowFile extends HTMLRenderable {
     setupContainer(container) {
         container.classed('flow-file', true);
 
-        // // Set position to avoid showing moving animation when it's created.
+        // Set position to avoid showing moving animation when it's created.
         container
             .style('left', d => `${d.position.x}px`)
             .style('top', d => `${d.position.y}px`)
@@ -95,7 +95,8 @@ class FlowFile extends HTMLRenderable {
         if (this.content) {
             switch (typeof this.content.value) {
                 case 'string':
-                    contentContainer.text(d => d.content.value);
+                    contentContainer.selectAll('pre').data([this]).enter().append('pre');
+                    contentContainer.select('pre').text(d => d.content.value);
                     break;
                 case 'function':
                     this.content.value(contentContainer);

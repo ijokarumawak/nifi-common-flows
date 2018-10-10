@@ -1,38 +1,46 @@
 var createFlowDiagram = function() {
     var f1_1 = new FlowFile('1', 1);
-    f1_1.position = { x: 200, y: 50 };
-    f1_1.attributes = [];
+    f1_1.attributes = [
+        {name: 'mime.type', value: 'text/csv'}
+    ];
     f1_1.content = {
-        type: 'text',
-        value: [
-            "id,v1,v2,v3",
-            "1,a,b,c",
-            "2,d,e,f",
-            "3,g,a,b"
-        ]
+        value:
+`id,v1,v2,v3
+1,a,b,c
+2,d,e,f
+3,g,a,b`
     };
-    f1_1.showData = true;
-    f1_1.showAttributes = false;
+    f1_1.showAttributes = true;
     f1_1.showContent = true;
     
     var f1_2 = new FlowFile('1', 2);
-    f1_2.position = { x: 20, y: 440 };
-    f1_2.attributes = [];
+    f1_2.attributes = [
+        {name: 'mime.type', value: 'application/json'}
+    ];
     f1_2.content = {
-        type: 'text',
-        value: [
-            "Avro Schema Data is embedded",
-            "with Avro records:",
-            "1,a,b,c",
-            "2,d,e,f",
-            "3,g,a,b"
-        ]
+        value:
+`[ {
+    "id" : "1",
+    "v1" : "a",
+    "v2" : "b",
+    "v3" : "c"
+    }, {
+    "id" : "2",
+    "v1" : "d",
+    "v2" : "e",
+    "v3" : "f"
+    }, {
+    "id" : "3",
+    "v1" : "g",
+    "v2" : "a",
+    "v3" : "b"
+    } ]`
     };
     f1_2.showData = true;
+    f1_2.showAttributes = true;
     f1_2.showContent = true;
     
     var p1 = new Processor('1', 'ConvertRecord');
-    p1.position = { x: 300, y: 250 };
     p1.properties = [
         {
             name: 'Record Reader',
@@ -40,7 +48,7 @@ var createFlowDiagram = function() {
         },
         {
             name: 'Record Writer',
-            value: 'AvroRecordSetWriter'
+            value: 'JsonRecordSetWriter'
         }
     ];
     p1.showDetails = true;
@@ -56,7 +64,7 @@ var createFlowDiagram = function() {
         }
     ];
     
-    var cs2 = new ControllerService('2', 'AvroRecordSetWriter');
+    var cs2 = new ControllerService('2', 'JsonRecordSetWriter');
     cs2.properties = [
         {
             name: 'Schema Access Strategy',
@@ -64,16 +72,27 @@ var createFlowDiagram = function() {
         },
         {
             name: 'Schema Write Strategy',
-            value: 'Embed Avro Schema'
+            value: 'Do Not Write Schema'
         }
     ];
     
+    var tooltip = new Tooltip('1');
+    tooltip.value = 'Tooltip Example';
+
     return new FlowDiagram({title: 'ConvertRecord',
         flowFiles: [f1_1, f1_2],
         processors: [p1],
         controllerServices: [cs1, cs2],
         arrows: [a1, a2],
+        tooltips: [tooltip],
         actions: [
+            {
+                'tooltip_1': {
+                    render: true,
+                    x: 200,
+                    y: 100
+                }
+            },
             {
                 'flow-file_1_1': {
                     render: true,
@@ -98,6 +117,8 @@ var createFlowDiagram = function() {
                 },
                 'processor_1': {
                     render: true,
+                    x: 400,
+                    y: 250,
                     highlight: true
                 },
                 'arrow_1': {
@@ -109,9 +130,17 @@ var createFlowDiagram = function() {
                     highlight: {
                         properties: ['Record Reader']
                     }
+                },
+                'tooltip_1': {
+                    x: 620,
+                    y: 450
                 }
             },
             {
+                'controller-services': {
+                    x: 750,
+                    y: 100
+                },
                 'controller-service_1': {
                     render: true,
                     highlight: true

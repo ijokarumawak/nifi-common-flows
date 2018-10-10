@@ -140,10 +140,20 @@ th {
     background-color: #409CB4;
 }
 
+#controller-services {
+    position: absolute;    
+}
+
+.controller-services-title {
+    color: #6D6D6D;
+    border-bottom: 2px solid #577077;
+}
+
 .controller-service {
     background-color: white;
     border: 2px solid #577077;
     border-top: 0px;
+    box-shadow: 5px 5px 3px #C3C3C7;
 }
 
 .controller-service-name {
@@ -156,4 +166,16 @@ th {
 
 .controller-service-name-highlight {
     background-color: #409CB4;
+}
+
+.tooltip {
+    color: #F3F3F3;
+    background-color: #464646;
+    border: 3px solid #272727;
+    border-radius: 5px;
+    box-shadow: 5px 5px 3px #C3C3C7;
+    position: absolute;
+    padding: 20px;
+    opacity: 0.9;
+    z-index: 100;
 }

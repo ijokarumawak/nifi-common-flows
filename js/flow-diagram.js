@@ -1,12 +1,13 @@
 class FlowDiagram {
 
-    constructor({title, flowFiles, processors, controllerServices, arrows, actions}) {
+    constructor({title, flowFiles, processors, controllerServices, arrows, tooltips, actions}) {
         this.title = title;
         this.index = 0;
         this.flowFiles = flowFiles;
         this.processors = processors;
         this.controllerServices = controllerServices;
         this.arrows = arrows;
+        this.tooltips = tooltips;
         this.actions = actions;
         // Analyze and expand animations.
         this.frames = new Array(actions.length);
@@ -42,9 +43,16 @@ class FlowDiagram {
                 var id = d.toId();
                 frame[id] = {
                     render: orPrevious(action, prevFrame, id, 'render', false),
-                    highlight: orPrevious(action, prevFrame, id, 'highlight', false)
+                    highlight: orPrevious(action, prevFrame, id, 'highlight', false),
+                    x: orPrevious(action, prevFrame, id, 'x', 0),
+                    y: orPrevious(action, prevFrame, id, 'y', 0)
                 };
             });
+
+            frame['controller-services'] = {
+                x: orPrevious(action, prevFrame, 'controller-services', 'x', 0),
+                y: orPrevious(action, prevFrame, 'controller-services', 'y', 0)
+            }
 
             this.controllerServices.forEach(d => {
                 var id = d.toId();
@@ -58,6 +66,15 @@ class FlowDiagram {
                 var id = d.toId();
                 frame[id] = {
                     render: orPrevious(action, prevFrame, id, 'render', false)
+                };
+            });
+
+            this.tooltips.forEach(d => {
+                var id = d.toId();
+                frame[id] = {
+                    render: orPrevious(action, prevFrame, id, 'render', false),
+                    x: orPrevious(action, prevFrame, id, 'x', 0),
+                    y: orPrevious(action, prevFrame, id, 'y', 0)
                 };
             });
         }
@@ -118,6 +135,7 @@ class FlowDiagram {
         // Render Processors.
         this.processors.forEach(d => {
             var fa = frame[d.toId()];
+            d.position = {x: fa.x, y: fa.y};
             d.setHighlight(fa.highlight);
             if (fa.render) {
                 d.render();
@@ -127,15 +145,43 @@ class FlowDiagram {
         });
 
         // Render ControllerServices.
+        var isAnyCSShown = typeof this.controllerServices.find(d => frame[d.toId()].render) !== 'undefined';
+        if (isAnyCSShown) {
+            // Create CS container if not exist.
+            var container = d3.select('#diagram-container');
+            container.selectAll('#controller-services')
+                .data([frame['controller-services']])
+                .enter()
+                .append('div')
+                .attr('id', 'controller-services')
+                .style('left', d => `${d.x}px`)
+                .style('top', d => `${d.y}px`)
+                .append('div')
+                .classed('controller-services-title', true)
+                .text('Controller Services');
+            
+            // Update CS container position.
+            container.select('#controller-services')
+                .transition()
+                .style('left', d => `${d.x}px`)
+                .style('top', d => `${d.y}px`);
+
+        } else {
+            // Delete CS container.
+            d3.select('#controller-services').remove();
+        }
+
         this.controllerServices.forEach(d => {
             var fa = frame[d.toId()];
             d.setHighlight(fa.highlight);
             if (fa.render) {
                 d.render();
+                isAnyCSShown = true;
             } else {
                 d.hide();
             }
         });
+
 
         // Render Arrows.
         this.arrows.forEach(d => {
@@ -147,6 +193,16 @@ class FlowDiagram {
             }
         });
         
+        // Render Tooltips.
+        this.tooltips.forEach(d => {
+            var fa = frame[d.toId()];
+            d.position = {x: fa.x, y: fa.y};
+            if (fa.render) {
+                d.render();
+            } else {
+                d.hide();
+            }
+        });
     }
 
 }

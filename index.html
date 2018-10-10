@@ -12,6 +12,7 @@
     <script type='text/javascript' src='js/processor.js'></script>
     <script type='text/javascript' src='js/controller-service.js'></script>
     <script type='text/javascript' src='js/arrow.js'></script>
+    <script type='text/javascript' src='js/tooltip.js'></script>
 </head>
 
 <body>
@@ -44,9 +45,6 @@
                         </defs>
                     </svg>
                 </div>
-                <div id="controller-services" style="display: none">
-                    Controller Services
-                </div>
             </div>
         </div>
     </div>
@@ -70,10 +68,6 @@
                 .on('click', d => {
                     // Show hidden items.
                     d3.select('#control-panel').style('visibility', 'visible');
-
-                    // Hide optional items.
-                    d3.select('#controller-services').style('display', 'none');
-
 
                     // Discard old rendered objects.
                     d3.select('#diagram-svg').selectAll('g').remove();
