@@ -62,8 +62,16 @@ th {
 #control-panel {
     align-self: flex-end;
     font-size: larger;
-    padding-left: 10px;
+    padding-left: 15px;
     padding-bottom: 5px;
+}
+
+#control-panel i {
+    cursor: pointer;
+}
+
+#control-panel i:hover {
+    color: blue;
 }
 
 #diagram-body {

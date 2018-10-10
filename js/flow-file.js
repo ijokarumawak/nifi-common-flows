@@ -11,6 +11,12 @@ class FlowFile extends HTMLRenderable {
     setupContainer(container) {
         container.classed('flow-file', true);
 
+        // // Set position to avoid showing moving animation when it's created.
+        container
+            .style('left', d => `${d.position.x}px`)
+            .style('top', d => `${d.position.y}px`)
+            .style('opacity', 0);
+            
         container.append('div')
             .classed('flow-file-id', true)
             .text(d => `${d.id}.${d.seq}`)
@@ -47,14 +53,15 @@ class FlowFile extends HTMLRenderable {
             });
         container.append('div')
             .classed('flow-file-content', true);
-
     }
 
     renderContainer(container) {
-        // Update positions.
-        container
+
+        // Update style.
+        container.transition()
             .style('left', d => `${d.position.x}px`)
-            .style('top', d => `${d.position.y}px`);
+            .style('top', d => `${d.position.y}px`)
+            .style('opacity', 1);
 
         // Highlight name.
         container.select('.flow-file-id')
@@ -105,10 +112,11 @@ class FlowFile extends HTMLRenderable {
                     break;
             }
         }
+
     }
 
     setHighlight(spec) {
-        this.highlight = typeof spec !== undefined && spec != null;
+        this.highlight = typeof spec !== undefined && spec;
 
         this.attributes.forEach(attribute => attribute.highlight
              = spec && spec.attributes && spec.attributes.includes(attribute.name));

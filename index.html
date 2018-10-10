@@ -74,10 +74,10 @@
                     // Hide optional items.
                     d3.select('#controller-services').style('display', 'none');
 
-                    // Discard all rendered objects.
-                    for(var k in renderedObjects) {
-                        renderedObjects[k].hide();
-                    };
+
+                    // Discard old rendered objects.
+                    d3.select('#diagram-svg').selectAll('g').remove();
+                    d3.select('#diagram-container').selectAll('div').remove();
 
                     // Remove old one first.
                     d3.select('#diagram-script')
@@ -90,7 +90,15 @@
                         .data([d])
                         .enter()
                         .append('script')
+                        .on('load', () => {
+                            // Create diagram.
+                            if (typeof createFlowDiagram === 'function') {
+                                var flowDiagram = createFlowDiagram();
+                                flowDiagram.render();
+                            }
+                        })
                         .attr('src', `diagrams/${d.name}.js`);
+
                 })
                 .text(d => d.name);
         });

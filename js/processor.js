@@ -64,7 +64,7 @@ class Processor extends HTMLRenderable {
     }
 
     setHighlight(spec) {
-        this.highlight = typeof spec !== undefined && spec != null;
+        this.highlight = typeof spec !== undefined && spec;
 
         this.properties.forEach(property => property.highlight
              = spec && spec.properties && spec.properties.includes(property.name));

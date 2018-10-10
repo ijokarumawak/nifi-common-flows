@@ -1,9 +1,67 @@
 class FlowDiagram {
 
-    constructor(title, index, actions) {
+    constructor({title, flowFiles, processors, controllerServices, arrows, actions}) {
         this.title = title;
-        this.index = index;
+        this.index = 0;
+        this.flowFiles = flowFiles;
+        this.processors = processors;
+        this.controllerServices = controllerServices;
+        this.arrows = arrows;
         this.actions = actions;
+        // Analyze and expand animations.
+        this.frames = new Array(actions.length);
+
+        var orPrevious = (action, prevFrame, objectId, paramName, defaultValue) => {
+            var a = action[objectId];
+            return (typeof a !== 'undefined' && typeof a[paramName] !== 'undefined')
+                // Return if the param is defined at the current action
+                ? a[paramName]
+                // If not, return previous value, or default value.
+                : ((typeof prevFrame !== 'undefined')
+                        ? prevFrame[objectId][paramName] : defaultValue);
+        }
+
+        for (var i = 0; i < actions.length; i++) {
+            var action = actions[i];
+            var frame = {};
+            var prevFrame = i == 0 ? undefined : this.frames[i - 1];
+            this.frames[i] = frame;
+            
+            // Create each objects action
+            this.flowFiles.forEach(d => {
+                var id = d.toId();
+                frame[id] = {
+                    render: orPrevious(action, prevFrame, id, 'render', false),
+                    highlight: orPrevious(action, prevFrame, id, 'highlight', false),
+                    x: orPrevious(action, prevFrame, id, 'x', 0),
+                    y: orPrevious(action, prevFrame, id, 'y', 0)
+                };
+            });
+
+            this.processors.forEach(d => {
+                var id = d.toId();
+                frame[id] = {
+                    render: orPrevious(action, prevFrame, id, 'render', false),
+                    highlight: orPrevious(action, prevFrame, id, 'highlight', false)
+                };
+            });
+
+            this.controllerServices.forEach(d => {
+                var id = d.toId();
+                frame[id] = {
+                    render: orPrevious(action, prevFrame, id, 'render', false),
+                    highlight: orPrevious(action, prevFrame, id, 'highlight', false)
+                };
+            });
+
+            this.arrows.forEach(d => {
+                var id = d.toId();
+                frame[id] = {
+                    render: orPrevious(action, prevFrame, id, 'render', false)
+                };
+            });
+        }
+        console.log('frames=', this.frames);
     }
 
     render() {
@@ -43,56 +101,52 @@ class FlowDiagram {
             a.action();
         }
 
-        // Highlihgt objects.
-        // Find highlight spec, if not defined at the current action, seek backward.
-        var highlightSpec;
-        for (var i = this.index; i >= 0 && typeof highlightSpec === 'undefined'; i--) {
-            highlightSpec = this.actions[i].highlight;
-        }
+        var frame = this.frames[this.index];
 
-        if (typeof highlightSpec === 'undefined') {
-            // Use empty spec to clear all highlights.
-            highlightSpec = {};
-        }
-        this.highlightObjects(highlightSpec.flowFiles, 'FlowFile');
-        this.highlightObjects(highlightSpec.processors, 'Processor');
-        this.highlightObjects(highlightSpec.controllerServices, 'ControllerService');
-
-        // Finally update the diagram.
-        // Find render spec, if not defined at the current action, seek backward.
-        var renderSpec;
-        for (var i = this.index; i >= 0 && typeof renderSpec === 'undefined'; i--) {
-            renderSpec = this.actions[i].render;
-        }
-
-        // Remove unspecified ones.
-        var ids = renderSpec.map(d => d.toId());
-        for (var k in renderedObjects) {
-            var o = renderedObjects[k];
-            if (!ids.includes(o.toId())) {
-                o.hide();
+        // Render FlowFiles.
+        this.flowFiles.forEach(d => {
+            var fa = frame[d.toId()];
+            d.position = {x: fa.x, y: fa.y};
+            d.setHighlight(fa.highlight);
+            if (fa.render) {
+                d.render();
+            } else {
+                d.hide();
             }
-        }                
+        });
 
-        // Render specific objects.
-        renderSpec.forEach(o => o.render());
-
-    }
-
-    highlightObjects(_targets, className) {
-        // Convert array to object so that targets can be found by its id.
-        var targets = {};
-        if (typeof _targets !== 'undefined') {
-            _targets.forEach(t => targets[t.d.toId()] = t);
-        }
-
-        for (var k in renderedObjects) {
-            var o = renderedObjects[k];
-            if (o.constructor.name === className) {
-                var spec = targets[o.toId()];
-                o.setHighlight(spec);
+        // Render Processors.
+        this.processors.forEach(d => {
+            var fa = frame[d.toId()];
+            d.setHighlight(fa.highlight);
+            if (fa.render) {
+                d.render();
+            } else {
+                d.hide();
             }
-        }
+        });
+
+        // Render ControllerServices.
+        this.controllerServices.forEach(d => {
+            var fa = frame[d.toId()];
+            d.setHighlight(fa.highlight);
+            if (fa.render) {
+                d.render();
+            } else {
+                d.hide();
+            }
+        });
+
+        // Render Arrows.
+        this.arrows.forEach(d => {
+            var fa = frame[d.toId()];
+            if (fa.render) {
+                d.render();
+            } else {
+                d.hide();
+            }
+        });
+        
     }
 
 }

@@ -25,9 +25,6 @@ class Renderable {
     }
     
     render() {
-        // Track this one
-        renderedObjects[this.toId()] = this;
-
         // Select existing ones
         var exContainer = this.selectContainer();
 
@@ -36,7 +33,9 @@ class Renderable {
         this.setupContainer(newContainer);
 
         // Common rendering logic for existing and new ones.
-        [exContainer, newContainer].forEach(container => this.renderContainer(container));
+        [exContainer, newContainer].forEach(container => {
+            this.renderContainer(container);
+        });
 
     }
 
