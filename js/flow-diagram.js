@@ -73,6 +73,7 @@ class FlowDiagram {
                 var id = d.toId();
                 frame[id] = {
                     render: orPrevious(action, prevFrame, id, 'render', false),
+                    content: orPrevious(action, prevFrame, id, 'content', false),
                     x: orPrevious(action, prevFrame, id, 'x', 0),
                     y: orPrevious(action, prevFrame, id, 'y', 0)
                 };
@@ -197,6 +198,7 @@ class FlowDiagram {
         this.tooltips.forEach(d => {
             var fa = frame[d.toId()];
             d.position = {x: fa.x, y: fa.y};
+            d.content = fa.content;
             if (fa.render) {
                 d.render();
             } else {

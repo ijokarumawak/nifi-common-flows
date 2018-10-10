@@ -77,7 +77,6 @@ var createFlowDiagram = function() {
     ];
     
     var tooltip = new Tooltip('1');
-    tooltip.value = 'Tooltip Example';
 
     return new FlowDiagram({title: 'ConvertRecord',
         flowFiles: [f1_1, f1_2],
@@ -90,7 +89,8 @@ var createFlowDiagram = function() {
                 'tooltip_1': {
                     render: true,
                     x: 200,
-                    y: 100
+                    y: 100,
+                    content: 'This is the beginning...'
                 }
             },
             {
@@ -133,7 +133,21 @@ var createFlowDiagram = function() {
                 },
                 'tooltip_1': {
                     x: 620,
-                    y: 450
+                    y: 450,
+                    content:
+`
+# Some Markdown content
+
+hello world
+
+1. one
+2. two
+3. three
+
+- foo
+- bar
+- baz
+`
                 }
             },
             {

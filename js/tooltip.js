@@ -1,6 +1,7 @@
 class Tooltip extends HTMLRenderable {
     constructor(id) {
         super(id);
+        this.mdConverter = new showdown.Converter();
     }
 
     toId() {
@@ -15,6 +16,9 @@ class Tooltip extends HTMLRenderable {
             .style('left', d => `${d.position.x}px`)
             .style('top', d => `${d.position.y}px`);
         
+        container
+            .append('div')
+            .classed('tooltipContent', true);
     }
 
     renderContainer(container) {
@@ -24,11 +28,10 @@ class Tooltip extends HTMLRenderable {
             .style('left', d => `${d.position.x}px`)
             .style('top', d => `${d.position.y}px`);
 
-        // Render content.
-        // TODO: Markdown
-        var contentContainer = container
-            .datum(this)
-            .text(d => d.value);
+        // Render content as Markdown.
+        container
+            .selectAll('.tooltipContent')
+            .html(this.mdConverter.makeHtml(this.content));
     }
 
 }

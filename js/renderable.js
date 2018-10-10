@@ -28,15 +28,12 @@ class Renderable {
         // Select existing ones
         var exContainer = this.selectContainer();
 
-        // Create new ones
+        // Create new ones if necessary.
         var newContainer = this.createNewContainer(exContainer);
         this.setupContainer(newContainer);
 
         // Common rendering logic for existing and new ones.
-        [exContainer, newContainer].forEach(container => {
-            this.renderContainer(container);
-        });
-
+        this.renderContainer(this.selectContainer());
     }
 
     getParentElementId() {
