@@ -34,6 +34,8 @@ class FlowDiagram {
                 frame[id] = {
                     render: orPrevious(action, prevFrame, id, 'render', false),
                     highlight: orPrevious(action, prevFrame, id, 'highlight', false),
+                    showAttributes: orPrevious(action, prevFrame, id, 'showAttributes', false),
+                    showContent: orPrevious(action, prevFrame, id, 'showContent', false),
                     x: orPrevious(action, prevFrame, id, 'x', 0),
                     y: orPrevious(action, prevFrame, id, 'y', 0)
                 };
@@ -125,6 +127,8 @@ class FlowDiagram {
         this.flowFiles.forEach(d => {
             var fa = frame[d.toId()];
             d.position = {x: fa.x, y: fa.y};
+            d.showAttributes = fa.showAttributes;
+            d.showContent = fa.showContent;
             d.setHighlight(fa.highlight);
             if (fa.render) {
                 d.render();

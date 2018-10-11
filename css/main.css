@@ -100,17 +100,24 @@ th {
 .flow-file {
     background-color: white;
     border: 3px solid #6B825E;
-    border-radius: 20px;
+    border-radius: 10px;
     box-shadow: 5px 5px 3px #C3C3C7;
     position: absolute;
 }
 
 .flow-file-id {
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
     padding: 8px;
-    border-radius: 16px 16px 0px 0px;
     font-weight: bolder;
     background-color: #A3A3A3;
     color: #FAFAFA;
+}
+
+.flow-file-footer {
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    min-height: 7px;
 }
 
 .flow-file-id-highlight {

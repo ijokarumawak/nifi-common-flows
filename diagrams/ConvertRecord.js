@@ -36,7 +36,6 @@ var createFlowDiagram = function() {
     "v3" : "b"
     } ]`
     };
-    f1_2.showData = true;
     f1_2.showAttributes = true;
     f1_2.showContent = true;
     
@@ -98,6 +97,16 @@ var createFlowDiagram = function() {
                     render: true,
                     x: 20,
                     highlight: true
+                }
+            },
+            {
+                'flow-file_1_1': {
+                    showAttributes: true
+                }
+            },
+            {
+                'flow-file_1_1': {
+                    showContent: true
                 }
             },
             {

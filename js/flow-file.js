@@ -19,26 +19,13 @@ class FlowFile extends HTMLRenderable {
             
         container.append('div')
             .classed('flow-file-id', true)
-            .text(d => `${d.id}.${d.seq}`)
-            .on('click', d => {
-                if (d.showData === true) {
-                    d.showData = false;
-                    d.showAttributes = false;
-                    d.showContent = false;
-                } else {
-                    d.showData = true;
-                }
-                
-                flowFile.render(flowFiles);
-            });
+            .text(d => `${d.id}.${d.seq}`);
 
         // Create attribute place-holder
-        container.append('div').text('Attributes').classed('data-label', true)
-            .on('click', d => {
-                d.showAttributes = d.showAttributes === true ? false : true;
-                flowFile.render(flowFiles);
-            });
-        var attributeTable = container.append('table')
+        var attributeContainer = container.append('div')
+            .classed('flow-file-attributes-container', true);
+        attributeContainer.append('div').text('Attributes').classed('data-label', true);
+        var attributeTable = attributeContainer.append('table')
             .append('tbody')
             .classed('flow-file-attributes', true);
         var attributeHeader = attributeTable.append('tr');
@@ -46,13 +33,14 @@ class FlowFile extends HTMLRenderable {
         attributeHeader.append('th').text('value');
 
         // Create content place-holder
-        container.append('div').text('Content').classed('data-label', true)
-            .on('click', d => {
-                d.showContent = d.showContent === true ? false : true;
-                flowFile.render(flowFiles);
-            });
-        container.append('div')
+        var contentContainer = container.append('div')
+            .classed('flow-file-content-container', true);
+        contentContainer.append('div').text('Content').classed('data-label', true);
+        contentContainer.append('div')
             .classed('flow-file-content', true);
+
+        container.append('div')
+            .classed('flow-file-footer', true);
     }
 
     renderContainer(container) {
@@ -66,37 +54,39 @@ class FlowFile extends HTMLRenderable {
         // Highlight name.
         container.select('.flow-file-id')
             .classed('flow-file-id-highlight', d => d.highlight);
-
-        // Show data labels.
-        container.selectAll('.data-label')
-            .style('display', d => d.showData ? 'block' : 'none')
+        container.select('.flow-file-footer')
+            .classed('flow-file-id-highlight', d => d.highlight);
 
         // Render attributes.
-        var attributes = container.select('.flow-file-attributes')
-            .style('display', d => d.showAttributes ? 'table-row-group' : 'none');
+        container.select('.flow-file-attributes-container')
+            .style('display', d => d.showAttributes ? 'block' : 'none');
 
-        var exAttributes = attributes
-            .selectAll('.flow-file-attribute')
-            .data(d => d.attributes)
-        var newAttributes = exAttributes.enter()
-            .append('tr')
-            .classed('flow-file-attribute', true);
-        newAttributes.append('td');
-        newAttributes.append('td');
+        if (this.showAttributes) {
+            var attributes = container.select('.flow-file-attributes')
 
-        [exAttributes, newAttributes].forEach(attribute => {
-            attribute.transition().style('background-color', d => d.highlight ? '#E1DC88' : 'white');
-            attribute.selectAll('td').data(d => [d.name, d.value]).text(d => d);
-        });
+            var exAttributes = attributes
+                .selectAll('.flow-file-attribute')
+                .data(d => d.attributes)
+            var newAttributes = exAttributes.enter()
+                .append('tr')
+                .classed('flow-file-attribute', true);
+            newAttributes.append('td');
+            newAttributes.append('td');
+    
+            var attributeRows = attributes.selectAll('.flow-file-attribute');
+            attributeRows.transition().style('background-color', d => d.highlight ? '#E1DC88' : null);
+            attributeRows.selectAll('td').data(d => [d.name, d.value]).text(d => d);
+        }
 
         // Render content.
-        var contentContainer = container.select('.flow-file-content')
+        var contentContainer = container.select('.flow-file-content-container')
             .style('display', d => d.showContent ? 'block' : 'none');
-        if (this.content) {
+
+        if (this.showContent && this.content) {
             switch (typeof this.content.value) {
                 case 'string':
-                    contentContainer.selectAll('pre').data([this]).enter().append('pre');
-                    contentContainer.select('pre').text(d => d.content.value);
+                    contentContainer.select('.flow-file-content').selectAll('pre').data([this]).enter().append('pre');
+                    contentContainer.select('.flow-file-content').select('pre').text(d => d.content.value);
                     break;
                 case 'function':
                     this.content.value(contentContainer);
