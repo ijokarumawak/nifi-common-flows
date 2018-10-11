@@ -1,7 +1,6 @@
 class Tooltip extends HTMLRenderable {
     constructor(id) {
         super(id);
-        this.mdConverter = new showdown.Converter();
     }
 
     toId() {

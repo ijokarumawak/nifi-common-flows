@@ -85,6 +85,11 @@ class Renderable {
 
 class HTMLRenderable extends Renderable {
 
+    constructor(id) {
+        super(id);
+        this.mdConverter = new showdown.Converter({tables: true});
+    }
+
     getParentElementId() {
         return 'diagram-container';
     }

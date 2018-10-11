@@ -83,25 +83,8 @@ class FlowFile extends HTMLRenderable {
             .style('display', d => d.showContent ? 'block' : 'none');
 
         if (this.showContent && this.content) {
-            switch (typeof this.content.value) {
-                case 'string':
-                    contentContainer.select('.flow-file-content').selectAll('pre').data([this]).enter().append('pre');
-                    contentContainer.select('.flow-file-content').select('pre').text(d => d.content.value);
-                    break;
-                case 'function':
-                    this.content.value(contentContainer);
-                    break;
-                case 'object':
-                    if (Array.isArray(this.content.value)) {
-                        contentContainer.selectAll('div')
-                            .data(this.content.value)
-                            .text(d => d)
-                            .enter()
-                            .append('div')
-                            .text(d => d);
-                    }
-                    break;
-            }
+            contentContainer.select('.flow-file-content')
+                .html(this.mdConverter.makeHtml(this.content));
         }
 
     }

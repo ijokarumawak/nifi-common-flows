@@ -3,13 +3,15 @@ var createFlowDiagram = function() {
     f1_1.attributes = [
         {name: 'mime.type', value: 'text/csv'}
     ];
-    f1_1.content = {
-        value:
-`id,v1,v2,v3
+    f1_1.content = 
+`
+\`\`\`csv
+id,v1,v2,v3
 1,a,b,c
 2,d,e,f
-3,g,a,b`
-    };
+3,g,a,b
+\`\`\`
+`;
     f1_1.showAttributes = true;
     f1_1.showContent = true;
     
@@ -17,9 +19,10 @@ var createFlowDiagram = function() {
     f1_2.attributes = [
         {name: 'mime.type', value: 'application/json'}
     ];
-    f1_2.content = {
-        value:
-`[ {
+    f1_2.content = 
+`
+\`\`\`json
+[ {
     "id" : "1",
     "v1" : "a",
     "v2" : "b",
@@ -34,8 +37,16 @@ var createFlowDiagram = function() {
     "v1" : "g",
     "v2" : "a",
     "v3" : "b"
-    } ]`
-    };
+    } ]
+\`\`\`
+
+\`\`\`javascript
+function foo() {
+  var bar = 'bar';
+  return bar;
+}
+\`\`\`
+`;
     f1_2.showAttributes = true;
     f1_2.showContent = true;
     
@@ -111,11 +122,12 @@ var createFlowDiagram = function() {
             },
             {
                 'flow-file_1_1': {
-                    render: true,
                     x: 300
                 },
                 'flow-file_1_2': {
                     render: true,
+                    showAttributes: true,
+                    showContent: true,
                     y: 200,
                     highlight: true
                 }
@@ -156,6 +168,15 @@ hello world
 - foo
 - bar
 - baz
+
+|a|b|c|
+|d|e|f|
+
+| h1    |    h2   |      h3 |
+|:------|:-------:|--------:|
+| 100   | [a][1]  | ![b][2] |
+| *foo* | **bar** | ~~baz~~ |
+
 `
                 }
             },

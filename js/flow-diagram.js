@@ -209,6 +209,12 @@ class FlowDiagram {
                 d.hide();
             }
         });
+
+        // Highlight code blocks.
+        var codeBlocks = document.getElementsByTagName('code');
+        for (var i = 0; i < codeBlocks.length; i++) {
+            hljs.highlightBlock(codeBlocks[i]);
+        }
     }
 
 }
