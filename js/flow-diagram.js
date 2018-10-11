@@ -123,6 +123,17 @@ class FlowDiagram {
 
         var frame = this.frames[this.index];
 
+        // Node boundaries.
+        var bboxesForNode = {};
+        var captureBBoxForNode = (d) => {
+            if (d.node) {
+                if (typeof bboxesForNode[d.node] === 'undefined') {
+                    bboxesForNode[d.node] = [];
+                }
+                bboxesForNode[d.node].push(d.bbox());
+            }
+        }
+
         // Render FlowFiles.
         this.flowFiles.forEach(d => {
             var fa = frame[d.toId()];
@@ -132,6 +143,7 @@ class FlowDiagram {
             d.setHighlight(fa.highlight);
             if (fa.render) {
                 d.render();
+                captureBBoxForNode(d);
             } else {
                 d.hide();
             }
@@ -144,10 +156,43 @@ class FlowDiagram {
             d.setHighlight(fa.highlight);
             if (fa.render) {
                 d.render();
+                captureBBoxForNode(d);
             } else {
                 d.hide();
             }
         });
+
+        // Render node boundary.
+        var nodeBoundaries = [];
+        for (var nodeId in bboxesForNode) {
+            var bboxes = bboxesForNode[nodeId];
+            var x0 = Math.min(...bboxes.map(b => b.x));
+            var x1 = Math.max(...bboxes.map(b => b.x + b.w));
+            var y0 = Math.min(...bboxes.map(b => b.y));
+            var y1 = Math.max(...bboxes.map(b => b.y + b.h));
+            nodeBoundaries.push({id: nodeId,
+                x: x0 - 10, y: y0 - 20,
+                w: x1 - x0 + 20, h: y1 - y0 + 30});
+        }
+
+        // Render node boundaries.
+        var nodeBoundarySelection = d3.select('#diagram-container')
+            .selectAll('.node-boundary')
+            .data(nodeBoundaries);
+        nodeBoundarySelection.exit().remove();
+        nodeBoundarySelection.enter()
+            .append('div')
+            .classed('node-boundary', true)
+            .text(d => `node: ${d.id}`);
+
+        d3.select('#diagram-container')
+            .selectAll('.node-boundary')
+            .data(nodeBoundaries)
+            .transition()
+            .style('left', d => `${d.x}px`)
+            .style('top', d => `${d.y}px`)
+            .style('width', d => `${d.w}px`)
+            .style('height', d => `${d.h}px`);
 
         // Render ControllerServices.
         var isAnyCSShown = typeof this.controllerServices.find(d => frame[d.toId()].render) !== 'undefined';

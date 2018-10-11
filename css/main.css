@@ -103,6 +103,7 @@ th {
     border-radius: 10px;
     box-shadow: 5px 5px 3px #C3C3C7;
     position: absolute;
+    z-index: 90;
 }
 
 .flow-file-id {
@@ -133,6 +134,7 @@ th {
     border: 3px solid #577077;
     box-shadow: 5px 5px 3px #C3C3C7;
     position: absolute;
+    z-index: 95;
 }
 
 .processor-name {
@@ -185,4 +187,9 @@ th {
     padding: 20px;
     opacity: 0.9;
     z-index: 100;
+}
+
+.node-boundary {
+    border: 1px solid blue;
+    position: absolute;
 }

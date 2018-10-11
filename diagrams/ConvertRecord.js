@@ -1,5 +1,6 @@
 var createFlowDiagram = function() {
     var f1_1 = new FlowFile('1', 1);
+    f1_1.node = 'A';
     f1_1.attributes = [
         {name: 'mime.type', value: 'text/csv'}
     ];
@@ -12,10 +13,9 @@ id,v1,v2,v3
 3,g,a,b
 \`\`\`
 `;
-    f1_1.showAttributes = true;
-    f1_1.showContent = true;
     
     var f1_2 = new FlowFile('1', 2);
+    f1_2.node = 'A';
     f1_2.attributes = [
         {name: 'mime.type', value: 'application/json'}
     ];
@@ -47,10 +47,9 @@ function foo() {
 }
 \`\`\`
 `;
-    f1_2.showAttributes = true;
-    f1_2.showContent = true;
     
     var p1 = new Processor('1', 'ConvertRecord');
+    p1.node = 'A';
     p1.properties = [
         {
             name: 'Record Reader',
@@ -106,7 +105,8 @@ function foo() {
             {
                 'flow-file_1_1': {
                     render: true,
-                    x: 20,
+                    x: 50,
+                    y: 50,
                     highlight: true
                 }
             },
@@ -128,6 +128,7 @@ function foo() {
                     render: true,
                     showAttributes: true,
                     showContent: true,
+                    x: 40,
                     y: 200,
                     highlight: true
                 }
