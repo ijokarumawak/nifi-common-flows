@@ -2,6 +2,7 @@ class Processor extends HTMLRenderable {
     constructor(id, name) {
         super(id);
         this.name = name;
+        this.properties = [];
     }
 
     toId() {

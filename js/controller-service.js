@@ -1,3 +1,30 @@
+class ControllerServices extends RenderableContainer {
+
+    constructor(children) {
+        super('controller-services', children);
+    }
+
+    toId() {
+        return `controller-services`;
+    }
+
+    setupContainer(container) {
+        container
+            .style('left', d => `${d.position.x}px`)
+            .style('top', d => `${d.position.y}px`)
+            .append('div')
+            .classed('controller-services-title', true)
+            .text('Controller Services');
+    }
+
+    renderContainer(container) {
+        container.transition()
+            .style('left', d => `${d.position.x}px`)
+            .style('top', d => `${d.position.y}px`);
+    }
+
+}
+
 class ControllerService extends HTMLRenderable {
     constructor(id, name) {
         super(id);

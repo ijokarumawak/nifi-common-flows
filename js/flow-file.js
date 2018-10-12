@@ -2,19 +2,27 @@ class FlowFile extends HTMLRenderable {
     constructor(id, seq) {
         super(id);
         this.seq = seq;
+        this.queued = false;
+        this.attributes = [];
     }
 
     toId() {
         return `flow-file_${this.id}_${this.seq}`;
     }
 
+    getParentElementId() {
+        return this.queued ? this.connectionId : 'diagram-container';
+    }
+
     setupContainer(container) {
         container.classed('flow-file', true);
 
         // Set position to avoid showing moving animation when it's created.
+        // If the FlowFile is queued, then it is rendered inside the queue.
         container
-            .style('left', d => `${d.position.x}px`)
-            .style('top', d => `${d.position.y}px`)
+            .style('position', d => d.queued ? null : 'absolute')
+            .style('left', d => d.queued ? null : `${d.position.x}px`)
+            .style('top', d => d.queued ? null : `${d.position.y}px`)
             .style('opacity', 0);
             
         container.append('div')
@@ -47,8 +55,9 @@ class FlowFile extends HTMLRenderable {
 
         // Update style.
         container.transition()
-            .style('left', d => `${d.position.x}px`)
-            .style('top', d => `${d.position.y}px`)
+            .style('left', d => d.queued ? null : `${d.position.x}px`)
+            .style('top', d => d.queued ? null : `${d.position.y}px`)
+            .style('position', d => d.queued ? 'static' : 'absolute')
             .style('opacity', 1);
 
         // Highlight name.

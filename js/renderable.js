@@ -1,4 +1,3 @@
-var renderedObjects = [];
 class Renderable {
     constructor(id) {
         this.id = id;
@@ -23,15 +22,30 @@ class Renderable {
             }
         return box;
     }
-    
-    render() {
+
+    refresh() {
+        if (this.isVisible()) {
+            this.render();
+        } else {
+            this.hide();
+        }
+    }
+
+    isVisible() {
+        return this.visible;
+    }
+
+    ensureContainer() {
         // Select existing ones
         var exContainer = this.selectContainer();
 
         // Create new ones if necessary.
         var newContainer = this.createNewContainer(exContainer);
         this.setupContainer(newContainer);
+    }
 
+    render() {
+        this.ensureContainer();
         // Common rendering logic for existing and new ones.
         this.renderContainer(this.selectContainer());
     }
@@ -112,4 +126,24 @@ class SVGRenderable extends Renderable {
             .append('g')
             .attr('id', this.toId());
     }
+}
+
+class RenderableContainer extends HTMLRenderable {
+
+    constructor(id, children) {
+        super(id);
+        this.children = children;
+    }
+
+    isVisible() {
+        return typeof this.children.find(d => d.visible) !== 'undefined';
+    }
+
+    refresh() {
+        // Render parent container.
+        super.refresh();
+        // Then render children.
+        this.children.forEach(d => d.refresh());
+    }
+
 }

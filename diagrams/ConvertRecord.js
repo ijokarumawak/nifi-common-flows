@@ -96,7 +96,7 @@ function foo() {
         actions: [
             {
                 'tooltip_1': {
-                    render: true,
+                    visible: true,
                     x: 200,
                     y: 100,
                     content: 'This is the beginning...'
@@ -104,7 +104,7 @@ function foo() {
             },
             {
                 'flow-file_1_1': {
-                    render: true,
+                    visible: true,
                     x: 50,
                     y: 50,
                     highlight: true
@@ -125,7 +125,7 @@ function foo() {
                     x: 300
                 },
                 'flow-file_1_2': {
-                    render: true,
+                    visible: true,
                     showAttributes: true,
                     showContent: true,
                     x: 40,
@@ -138,13 +138,13 @@ function foo() {
                     highlight: false
                 },
                 'processor_1': {
-                    render: true,
+                    visible: true,
                     x: 400,
                     y: 250,
                     highlight: true
                 },
                 'arrow_1': {
-                    render: true
+                    visible: true
                 }
             },
             {
@@ -187,7 +187,7 @@ hello world
                     y: 100
                 },
                 'controller-service_1': {
-                    render: true,
+                    visible: true,
                     highlight: true
                 }
             },
@@ -200,13 +200,13 @@ hello world
             },
             {
                 'controller-service_2': {
-                    render: true,
+                    visible: true,
                     highlight: true
                 }
             },
             {
                 'arrow_2': {
-                    render: true
+                    visible: true
                 }
             }
         ]

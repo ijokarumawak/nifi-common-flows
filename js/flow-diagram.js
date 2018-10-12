@@ -1,11 +1,12 @@
 class FlowDiagram {
 
-    constructor({title, flowFiles, processors, controllerServices, arrows, tooltips, actions}) {
+    constructor({title, flowFiles, processors, connections, controllerServices, arrows, tooltips, actions}) {
         this.title = title;
         this.index = 0;
         this.flowFiles = flowFiles;
         this.processors = processors;
-        this.controllerServices = controllerServices;
+        this.connections = connections;
+        this.controllerServices = typeof controllerServices !== 'undefined' ? new ControllerServices(controllerServices) : undefined;
         this.arrows = arrows;
         this.tooltips = tooltips;
         this.actions = actions;
@@ -32,7 +33,7 @@ class FlowDiagram {
             this.flowFiles.forEach(d => {
                 var id = d.toId();
                 frame[id] = {
-                    render: orPrevious(action, prevFrame, id, 'render', false),
+                    visible: orPrevious(action, prevFrame, id, 'visible', false),
                     highlight: orPrevious(action, prevFrame, id, 'highlight', false),
                     showAttributes: orPrevious(action, prevFrame, id, 'showAttributes', false),
                     showContent: orPrevious(action, prevFrame, id, 'showContent', false),
@@ -44,42 +45,58 @@ class FlowDiagram {
             this.processors.forEach(d => {
                 var id = d.toId();
                 frame[id] = {
-                    render: orPrevious(action, prevFrame, id, 'render', false),
+                    visible: orPrevious(action, prevFrame, id, 'visible', false),
                     highlight: orPrevious(action, prevFrame, id, 'highlight', false),
                     x: orPrevious(action, prevFrame, id, 'x', 0),
                     y: orPrevious(action, prevFrame, id, 'y', 0)
                 };
             });
 
+            if (this.connections) {
+                this.connections.forEach(d => {
+                    var id = d.toId();
+                    frame[id] = {
+                        x: orPrevious(action, prevFrame, id, 'x', 0),
+                        y: orPrevious(action, prevFrame, id, 'y', 0)
+                    };
+                });
+            }
+
             frame['controller-services'] = {
                 x: orPrevious(action, prevFrame, 'controller-services', 'x', 0),
                 y: orPrevious(action, prevFrame, 'controller-services', 'y', 0)
             }
 
-            this.controllerServices.forEach(d => {
-                var id = d.toId();
-                frame[id] = {
-                    render: orPrevious(action, prevFrame, id, 'render', false),
-                    highlight: orPrevious(action, prevFrame, id, 'highlight', false)
-                };
-            });
+            if (this.controllerServices) {
+                this.controllerServices.children.forEach(d => {
+                    var id = d.toId();
+                    frame[id] = {
+                        visible: orPrevious(action, prevFrame, id, 'visible', false),
+                        highlight: orPrevious(action, prevFrame, id, 'highlight', false)
+                    };
+                });
+            }
 
-            this.arrows.forEach(d => {
-                var id = d.toId();
-                frame[id] = {
-                    render: orPrevious(action, prevFrame, id, 'render', false)
-                };
-            });
+            if (this.arrows) {
+                this.arrows.forEach(d => {
+                    var id = d.toId();
+                    frame[id] = {
+                        visible: orPrevious(action, prevFrame, id, 'visible', false)
+                    };
+                });
+            }
 
-            this.tooltips.forEach(d => {
-                var id = d.toId();
-                frame[id] = {
-                    render: orPrevious(action, prevFrame, id, 'render', false),
-                    content: orPrevious(action, prevFrame, id, 'content', false),
-                    x: orPrevious(action, prevFrame, id, 'x', 0),
-                    y: orPrevious(action, prevFrame, id, 'y', 0)
-                };
-            });
+            if (this.tooltips) {
+                this.tooltips.forEach(d => {
+                    var id = d.toId();
+                    frame[id] = {
+                        visible: orPrevious(action, prevFrame, id, 'visible', false),
+                        content: orPrevious(action, prevFrame, id, 'content', false),
+                        x: orPrevious(action, prevFrame, id, 'x', 0),
+                        y: orPrevious(action, prevFrame, id, 'y', 0)
+                    };
+                });
+            }
         }
         console.log('frames=', this.frames);
     }
@@ -134,6 +151,23 @@ class FlowDiagram {
             }
         }
 
+        // Render Processors.
+        this.processors.forEach(d => {
+            var fa = frame[d.toId()];
+            d.position = {x: fa.x, y: fa.y};
+            d.setHighlight(fa.highlight);
+            d.visible = fa.visible;
+            d.refresh();
+            if (d.visible) {
+                captureBBoxForNode(d);
+            }
+        });
+
+        // Pre-render Connections to create divs so that queued FlowFiles can be added.
+        if (this.connections) {
+            this.connections.filter(d => d.isVisible()).forEach(d => d.ensureContainer());
+        }
+
         // Render FlowFiles.
         this.flowFiles.forEach(d => {
             var fa = frame[d.toId()];
@@ -141,26 +175,19 @@ class FlowDiagram {
             d.showAttributes = fa.showAttributes;
             d.showContent = fa.showContent;
             d.setHighlight(fa.highlight);
-            if (fa.render) {
-                d.render();
+            d.visible = fa.visible;
+            d.refresh();
+            if (d.visible) {
                 captureBBoxForNode(d);
-            } else {
-                d.hide();
             }
         });
 
-        // Render Processors.
-        this.processors.forEach(d => {
-            var fa = frame[d.toId()];
-            d.position = {x: fa.x, y: fa.y};
-            d.setHighlight(fa.highlight);
-            if (fa.render) {
-                d.render();
-                captureBBoxForNode(d);
-            } else {
-                d.hide();
-            }
-        });
+        // Re-render Connections to update its position.
+        if (this.connections) {
+            this.connections.forEach(d => {
+                d.refresh();
+            });
+        }
 
         // Render node boundary.
         var nodeBoundaries = [];
@@ -194,66 +221,40 @@ class FlowDiagram {
             .style('width', d => `${d.w}px`)
             .style('height', d => `${d.h}px`);
 
-        // Render ControllerServices.
-        var isAnyCSShown = typeof this.controllerServices.find(d => frame[d.toId()].render) !== 'undefined';
-        if (isAnyCSShown) {
-            // Create CS container if not exist.
-            var container = d3.select('#diagram-container');
-            container.selectAll('#controller-services')
-                .data([frame['controller-services']])
-                .enter()
-                .append('div')
-                .attr('id', 'controller-services')
-                .style('left', d => `${d.x}px`)
-                .style('top', d => `${d.y}px`)
-                .append('div')
-                .classed('controller-services-title', true)
-                .text('Controller Services');
-            
-            // Update CS container position.
-            container.select('#controller-services')
-                .transition()
-                .style('left', d => `${d.x}px`)
-                .style('top', d => `${d.y}px`);
 
-        } else {
-            // Delete CS container.
-            d3.select('#controller-services').remove();
+        if (this.controllerServices) {
+            // Update ControllerService instances.
+            this.controllerServices.children.forEach(d => {
+                var fa = frame[d.toId()];
+                d.setHighlight(fa.highlight);
+                d.visible = fa.visible;
+            });
+            // Then render ControllerServices.
+            var csf = frame['controller-services'];
+            this.controllerServices.position = {x: csf.x, y: csf.y};
+            this.controllerServices.refresh();
         }
-
-        this.controllerServices.forEach(d => {
-            var fa = frame[d.toId()];
-            d.setHighlight(fa.highlight);
-            if (fa.render) {
-                d.render();
-                isAnyCSShown = true;
-            } else {
-                d.hide();
-            }
-        });
 
 
         // Render Arrows.
-        this.arrows.forEach(d => {
-            var fa = frame[d.toId()];
-            if (fa.render) {
-                d.render();
-            } else {
-                d.hide();
-            }
-        });
+        if (this.arrows) {
+            this.arrows.forEach(d => {
+                var fa = frame[d.toId()];
+                d.visible = fa.visible;
+                d.refresh();
+            });
+        }
         
         // Render Tooltips.
-        this.tooltips.forEach(d => {
-            var fa = frame[d.toId()];
-            d.position = {x: fa.x, y: fa.y};
-            d.content = fa.content;
-            if (fa.render) {
-                d.render();
-            } else {
-                d.hide();
-            }
-        });
+        if (this.tooltips) {
+            this.tooltips.forEach(d => {
+                var fa = frame[d.toId()];
+                d.position = {x: fa.x, y: fa.y};
+                d.content = fa.content;
+                d.visible = fa.visible;
+                d.refresh();
+            });
+        }
 
         // Highlight code blocks.
         var codeBlocks = document.getElementsByTagName('code');

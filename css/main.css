@@ -193,3 +193,7 @@ th {
     border: 1px solid blue;
     position: absolute;
 }
+
+.connection {
+    position: absolute;
+}
