@@ -1,12 +1,14 @@
 class FlowDiagram {
 
-    constructor({title, flowFiles, processors, connections, controllerServices, arrows, tooltips, actions}) {
+    constructor({title, flowFiles, processors, connections, controllerServices,
+                 dataSets, arrows, tooltips, actions}) {
         this.title = title;
         this.index = 0;
         this.flowFiles = flowFiles;
         this.processors = processors;
         this.connections = connections;
         this.controllerServices = typeof controllerServices !== 'undefined' ? new ControllerServices(controllerServices) : undefined;
+        this.dataSets = dataSets;
         this.arrows = arrows;
         this.tooltips = tooltips;
         this.actions = actions;
@@ -30,27 +32,31 @@ class FlowDiagram {
             this.frames[i] = frame;
             
             // Create each objects action
-            this.flowFiles.forEach(d => {
-                var id = d.toId();
-                frame[id] = {
-                    visible: orPrevious(action, prevFrame, id, 'visible', false),
-                    highlight: orPrevious(action, prevFrame, id, 'highlight', false),
-                    showAttributes: orPrevious(action, prevFrame, id, 'showAttributes', false),
-                    showContent: orPrevious(action, prevFrame, id, 'showContent', false),
-                    x: orPrevious(action, prevFrame, id, 'x', 0),
-                    y: orPrevious(action, prevFrame, id, 'y', 0)
-                };
-            });
+            if (this.flowFiles) {
+                this.flowFiles.forEach(d => {
+                    var id = d.toId();
+                    frame[id] = {
+                        visible: orPrevious(action, prevFrame, id, 'visible', false),
+                        highlight: orPrevious(action, prevFrame, id, 'highlight', false),
+                        showAttributes: orPrevious(action, prevFrame, id, 'showAttributes', false),
+                        showContent: orPrevious(action, prevFrame, id, 'showContent', false),
+                        x: orPrevious(action, prevFrame, id, 'x', 0),
+                        y: orPrevious(action, prevFrame, id, 'y', 0)
+                    };
+                });
+            }
 
-            this.processors.forEach(d => {
-                var id = d.toId();
-                frame[id] = {
-                    visible: orPrevious(action, prevFrame, id, 'visible', false),
-                    highlight: orPrevious(action, prevFrame, id, 'highlight', false),
-                    x: orPrevious(action, prevFrame, id, 'x', 0),
-                    y: orPrevious(action, prevFrame, id, 'y', 0)
-                };
-            });
+            if (this.processors) {
+                this.processors.forEach(d => {
+                    var id = d.toId();
+                    frame[id] = {
+                        visible: orPrevious(action, prevFrame, id, 'visible', false),
+                        highlight: orPrevious(action, prevFrame, id, 'highlight', false),
+                        x: orPrevious(action, prevFrame, id, 'x', 0),
+                        y: orPrevious(action, prevFrame, id, 'y', 0)
+                    };
+                });
+            }
 
             if (this.connections) {
                 this.connections.forEach(d => {
@@ -74,6 +80,26 @@ class FlowDiagram {
                         visible: orPrevious(action, prevFrame, id, 'visible', false),
                         highlight: orPrevious(action, prevFrame, id, 'highlight', false)
                     };
+                });
+            }
+
+            if (this.dataSets) {
+                this.dataSets.forEach(ds => {
+                    var dsId = ds.toId();
+                    frame[dsId] = {
+                        x: orPrevious(action, prevFrame, dsId, 'x', 0),
+                        y: orPrevious(action, prevFrame, dsId, 'y', 0)
+                    };
+
+                    ds.children.forEach(d => {
+                        var id = d.toId();
+                        frame[id] = {
+                            visible: orPrevious(action, prevFrame, id, 'visible', false),
+                            highlight: orPrevious(action, prevFrame, id, 'highlight', false),
+                            showHeaders: orPrevious(action, prevFrame, id, 'showHeaders', false),
+                            showContent: orPrevious(action, prevFrame, id, 'showContent', false),
+                        };
+                    });
                 });
             }
 
@@ -152,16 +178,18 @@ class FlowDiagram {
         }
 
         // Render Processors.
-        this.processors.forEach(d => {
-            var fa = frame[d.toId()];
-            d.position = {x: fa.x, y: fa.y};
-            d.setHighlight(fa.highlight);
-            d.visible = fa.visible;
-            d.refresh();
-            if (d.visible) {
-                captureBBoxForNode(d);
-            }
-        });
+        if (this.processors) {
+            this.processors.forEach(d => {
+                var fa = frame[d.toId()];
+                d.position = {x: fa.x, y: fa.y};
+                d.setHighlight(fa.highlight);
+                d.visible = fa.visible;
+                d.refresh();
+                if (d.visible) {
+                    captureBBoxForNode(d);
+                }
+            });
+        }
 
         // Pre-render Connections to create divs so that queued FlowFiles can be added.
         if (this.connections) {
@@ -169,18 +197,20 @@ class FlowDiagram {
         }
 
         // Render FlowFiles.
-        this.flowFiles.forEach(d => {
-            var fa = frame[d.toId()];
-            d.position = {x: fa.x, y: fa.y};
-            d.showAttributes = fa.showAttributes;
-            d.showContent = fa.showContent;
-            d.setHighlight(fa.highlight);
-            d.visible = fa.visible;
-            d.refresh();
-            if (d.visible) {
-                captureBBoxForNode(d);
-            }
-        });
+        if (this.flowFiles) {
+            this.flowFiles.forEach(d => {
+                var fa = frame[d.toId()];
+                d.position = {x: fa.x, y: fa.y};
+                d.showAttributes = fa.showAttributes;
+                d.showContent = fa.showContent;
+                d.setHighlight(fa.highlight);
+                d.visible = fa.visible;
+                d.refresh();
+                if (d.visible) {
+                    captureBBoxForNode(d);
+                }
+            });
+        }
 
         // Re-render Connections to update its position.
         if (this.connections) {
@@ -235,6 +265,22 @@ class FlowDiagram {
             this.controllerServices.refresh();
         }
 
+        if (this.dataSets) {
+            this.dataSets.forEach(ds => {
+                // Update DataObject instances.
+                ds.children.forEach(d => {
+                    var fa = frame[d.toId()];
+                    d.setHighlight(fa.highlight);
+                    d.visible = fa.visible;
+                    d.showHeaders = fa.showHeaders;
+                    d.showContent = fa.showContent;
+                });
+                // Then render DataSets.
+                var dsf = frame[ds.toId()];
+                ds.position = {x: dsf.x, y: dsf.y};
+                ds.refresh();
+            });
+        }
 
         // Render Arrows.
         if (this.arrows) {

@@ -2,5 +2,6 @@
     {"name": "UpdateAttribute", "desc": "Simple update."},
     {"name": "ReplaceText", "desc": "Simple replace."},
     {"name": "ConvertRecord", "desc": "Simple convert."},
-    {"name": "Prioritizer", "desc": "Simple convert."}
+    {"name": "Prioritizer", "desc": "Simple convert."},
+    {"name": "DataSets", "desc": "Simple convert."}
 ]

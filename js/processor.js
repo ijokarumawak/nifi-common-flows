@@ -14,12 +14,7 @@ class Processor extends HTMLRenderable {
 
         container.append('div')
             .classed('processor-name', true)
-            .text(d => d.name)
-            .on('click', d => {
-                d.showDetails = d.showDetails === true ? false : true;
-                console.log(d);
-                processor.render(processors);
-            });
+            .text(d => d.name);
 
         // Create properties place-holder
         container.append('div').text('Properties').classed('data-label', true);

@@ -15,14 +15,14 @@ table {
 }
 
 td {
-    min-width: 8em;
-    padding: 8px;
+    padding: 5px;
     border-width: 0 1px 1px 0;
     border-style: solid;
     border-color: #C7C7C7;
 }
 
 th {
+    min-width: 4em;
     font-size: smaller;
     font-weight: normal;
     color: gray;
@@ -99,7 +99,7 @@ th {
 
 .flow-file {
     background-color: white;
-    border: 3px solid #6B825E;
+    border: 3px solid #6D6D6D;
     border-radius: 10px;
     box-shadow: 5px 5px 3px #C3C3C7;
     position: absolute;
@@ -119,6 +119,7 @@ th {
     border-bottom-left-radius: 7px;
     border-bottom-right-radius: 7px;
     min-height: 7px;
+    background-color: #A3A3A3;
 }
 
 .flow-file-id-highlight {
@@ -196,4 +197,48 @@ th {
 
 .connection {
     position: absolute;
+}
+
+.data-set {
+    position: absolute;
+    z-index: 80;
+}
+
+.data-set-name i {
+    margin-right: 5px;
+}
+
+.data-object {
+    background-color: white;
+    border: 3px solid #6D6D6D;
+    border-radius: 10px;
+    box-shadow: 5px 5px 3px #C3C3C7;
+}
+
+.data-object-name {
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    padding: 8px;
+    font-weight: bolder;
+    background-color: #A3A3A3;
+    color: #FAFAFA;
+}
+
+.data-object-name i {
+    margin-right: 5px;
+}
+
+.data-object-footer {
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    min-height: 7px;
+    background-color: #A3A3A3;
+}
+
+.data-object-name-highlight {
+    background-color: #8EBE70;    
+}
+
+.data-object-content {
+    padding: 8px;
 }
