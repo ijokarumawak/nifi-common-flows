@@ -15,6 +15,8 @@ class FlowFile extends HTMLRenderable {
     }
 
     setupContainer(container) {
+        this.setDraggable(container);
+        
         container.classed('flow-file', true);
 
         // Set position to avoid showing moving animation when it's created.
@@ -83,7 +85,7 @@ class FlowFile extends HTMLRenderable {
             newAttributes.append('td');
     
             var attributeRows = attributes.selectAll('.flow-file-attribute');
-            attributeRows.transition().style('background-color', d => d.highlight ? '#E1DC88' : null);
+            attributeRows.classed('highlighted', d => d.highlight);
             attributeRows.selectAll('td').data(d => [d.name, d.value]).text(d => d);
         }
 

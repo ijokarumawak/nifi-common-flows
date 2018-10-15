@@ -1,9 +1,10 @@
 class Connection extends RenderableContainer {
 
     constructor(id, name, pIn, pOut) {
-        var arrow = new Arrow(id, pIn, pOut)
+        super(id, []);
+        var arrow = new Arrow(this.toId(), pIn, pOut)
         arrow.visible = true;
-        super(id, [arrow]);
+        this.children.push(arrow);
         this.name = name;
         this.pIn = pIn;
         this.pOut = pOut;

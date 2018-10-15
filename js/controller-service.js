@@ -9,6 +9,8 @@ class ControllerServices extends RenderableContainer {
     }
 
     setupContainer(container) {
+        this.setDraggable(container);
+        
         container
             .style('left', d => `${d.position.x}px`)
             .style('top', d => `${d.position.y}px`)
@@ -47,13 +49,15 @@ class ControllerService extends HTMLRenderable {
             .text(d => d.name);
 
         // Create properties place-holder
-        container.append('div').text('Properties').classed('data-label', true);
-        var propertiesTable = container.append('table')
+        var propertiesContainer = container.append('div')
+            .classed('controller-service-properties-container', true);
+        propertiesContainer.append('div').text('Properties').classed('data-label', true);
+        var propertiesTable = propertiesContainer.append('table')
             .append('tbody')
             .classed('controller-service-properties', true);
-        var propertyHeader = propertiesTable.append('tr');
-        propertyHeader.append('th').text('name');
-        propertyHeader.append('th').text('value');
+        var propertiesHeader = propertiesTable.append('tr');
+        propertiesHeader.append('th').text('name');
+        propertiesHeader.append('th').text('value');
     }
 
     renderContainer(container) {
@@ -65,21 +69,26 @@ class ControllerService extends HTMLRenderable {
             .classed('controller-service-name-highlight', d => d.highlight);
 
         // Render properties.
-        var properties = container.select('.controller-service-properties')
-            .style('display', d => d.properties && d.properties.length > 0 ? 'table-row-group' : 'none');
+        container.select('.controller-service-properties-container')
+            .style('display', d => d.showProperties ? 'block' : 'none');
 
-        var exProperties = properties
-            .selectAll('.controller-service-property')
-            .data(d => d.properties ? d.properties : [])
-        var newProperties = exProperties.enter()
-            .append('tr')
-            .classed('controller-service-property', true);
-        newProperties.append('td');
-        newProperties.append('td');
+        if (this.showProperties) {
+            var properties = container.select('.controller-service-properties')
 
-        [exProperties, newProperties].forEach(property => {
-            property.selectAll('td').data(d => [d.name, d.value]).text(d => d);
-        });
+            var exProperties = properties
+                .selectAll('.controller-service-property')
+                .data(d => d.properties)
+            var newProperties = exProperties.enter()
+                .append('tr')
+                .classed('controller-service-property', true);
+            newProperties.append('td');
+            newProperties.append('td');
+    
+            var propertyRows = properties.selectAll('.controller-service-property');
+            propertyRows.classed('highlighted', d => d.highlight);
+            propertyRows.selectAll('td').data(d => [d.name, d.value]).text(d => d);
+        }
+
     }
 
     setHighlight(spec) {

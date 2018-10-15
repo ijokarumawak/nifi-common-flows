@@ -16,6 +16,8 @@ class DataSet extends RenderableContainer {
     }
 
     setupContainer(container) {
+        this.setDraggable(container);
+
         var dataSetName = container
             .classed('data-set', true)    
             .style('left', d => `${d.position.x}px`)
@@ -26,7 +28,7 @@ class DataSet extends RenderableContainer {
             .classed('fa', true)
             .classed(this.iconClass, true);
         dataSetName.append('span')
-            .text(d => d.name);
+            .text(d => d.name);        
     }
 
     renderContainer(container) {
@@ -116,7 +118,7 @@ class DataObject extends HTMLRenderable {
             newHeaders.append('td');
     
             var headerRows = headers.selectAll('.data-object-header');
-            headerRows.transition().style('background-color', d => d.highlight ? '#E1DC88' : null);
+            headerRows.classed('highlighted', d => d.highlight);
             headerRows.selectAll('td').data(d => [d.name, d.value]).text(d => d);
         }
 

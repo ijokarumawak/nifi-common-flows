@@ -24,8 +24,14 @@
 <body>
     <div id="flow-diagram">
         <div id="left-pane">
-            <h3>Data Flow Patterns</h3>
-            <div id="diagram-navi"></div>
+            <div id="left-pane-closed" style="display: none;">
+                <i id="open-left-pane" class="fa fa-angle-double-right"></i>
+            </div>
+            <div id="left-pane-open">
+                <div><i id="close-left-pane" class="fa fa-angle-double-left"></i></div>
+                <h3>Data Flow Patterns</h3>
+                <div id="diagram-navi"></div>
+            </div>
         </div>
         <div id="right-pane">
             <div id="diagram-header">
@@ -59,10 +65,24 @@
 
         var adjustSVGSize = () => {
             d3.select('#diagram-svg')
-            .attr('height', window.innerHeight - document.getElementById('diagram-header').scrollHeight - 5);
+            .attr('height', window.innerHeight - document.getElementById('diagram-header').scrollHeight - 5)
+            .attr('width', window.innerWidth - document.getElementById('left-pane').scrollWidth - 5);
         }
         adjustSVGSize();
         window.addEventListener('resize', adjustSVGSize);
+
+        d3.select('#open-left-pane').on('click', () => {
+            // Show left pane.
+            d3.select('#left-pane-open').style('display', 'block');
+            d3.select('#left-pane-closed').style('display', 'none');
+        });
+
+        var closeLeftPane = () => {
+            // Close left pane.
+            d3.select('#left-pane-open').style('display', 'none');
+            d3.select('#left-pane-closed').style('display', 'block');
+        };
+        d3.select('#close-left-pane').on('click', closeLeftPane);
 
         d3.json('diagrams/index.json').then(diagrams => {
             d3.select('#diagram-navi')
@@ -72,6 +92,9 @@
                 .enter()
                 .append('li')
                 .on('click', d => {
+                    // Hide left pane.
+                    closeLeftPane();
+
                     // Show hidden items.
                     d3.select('#control-panel').style('visibility', 'visible');
 
@@ -97,7 +120,7 @@
                                 flowDiagram.render();
                             }
                         })
-                        .attr('src', `diagrams/${d.name}.js`);
+                        .attr('src', `diagrams/${d.name}.js?ts=${new Date().getTime()}`);
 
                 })
                 .text(d => d.name);

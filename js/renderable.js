@@ -113,6 +113,18 @@ class HTMLRenderable extends Renderable {
             .append('div')
             .attr('id', this.toId());
     }
+
+    setDraggable(container) {
+        container.call(d3.drag().on('start', () => {
+            d3.event.on('drag', (d) => {
+                d.position = {x: d3.event.x, y: d3.event.y};
+                container.style('left', `${d.position.x}px`)
+                        .style('top', `${d.position.y}px`);
+            }).on('end', (d) => {
+                console.log({x: d3.event.x, y: d3.event.y}, d3.event);
+            });
+        }))
+    }
 }
 
 class SVGRenderable extends Renderable {

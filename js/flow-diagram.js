@@ -41,7 +41,8 @@ class FlowDiagram {
                         showAttributes: orPrevious(action, prevFrame, id, 'showAttributes', false),
                         showContent: orPrevious(action, prevFrame, id, 'showContent', false),
                         x: orPrevious(action, prevFrame, id, 'x', 0),
-                        y: orPrevious(action, prevFrame, id, 'y', 0)
+                        y: orPrevious(action, prevFrame, id, 'y', 0),
+                        content: orPrevious(action, prevFrame, id, 'content', undefined)
                     };
                 });
             }
@@ -52,16 +53,7 @@ class FlowDiagram {
                     frame[id] = {
                         visible: orPrevious(action, prevFrame, id, 'visible', false),
                         highlight: orPrevious(action, prevFrame, id, 'highlight', false),
-                        x: orPrevious(action, prevFrame, id, 'x', 0),
-                        y: orPrevious(action, prevFrame, id, 'y', 0)
-                    };
-                });
-            }
-
-            if (this.connections) {
-                this.connections.forEach(d => {
-                    var id = d.toId();
-                    frame[id] = {
+                        showProperties: orPrevious(action, prevFrame, id, 'showProperties', false),
                         x: orPrevious(action, prevFrame, id, 'x', 0),
                         y: orPrevious(action, prevFrame, id, 'y', 0)
                     };
@@ -77,6 +69,7 @@ class FlowDiagram {
                 this.controllerServices.children.forEach(d => {
                     var id = d.toId();
                     frame[id] = {
+                        showProperties: orPrevious(action, prevFrame, id, 'showProperties', false),
                         visible: orPrevious(action, prevFrame, id, 'visible', false),
                         highlight: orPrevious(action, prevFrame, id, 'highlight', false)
                     };
@@ -98,6 +91,7 @@ class FlowDiagram {
                             highlight: orPrevious(action, prevFrame, id, 'highlight', false),
                             showHeaders: orPrevious(action, prevFrame, id, 'showHeaders', false),
                             showContent: orPrevious(action, prevFrame, id, 'showContent', false),
+                            content: orPrevious(action, prevFrame, id, 'content', undefined),
                         };
                     });
                 });
@@ -146,11 +140,12 @@ class FlowDiagram {
                 this.render();
             })
 
-        d3.select('#diagram-next')
-            .on('click', () => {
-                this.index = Math.min(this.index + 1, this.actions.length - 1);
-                this.render();
-            })
+        var renderNext = () => {
+            this.index = Math.min(this.index + 1, this.actions.length - 1);
+            this.render();
+        };
+        d3.select('#diagram-next').on('click', renderNext);
+        d3.select('#diagram-container').on('click', renderNext);
 
         d3.select('#diagram-last')
             .on('click', () => {
@@ -184,6 +179,7 @@ class FlowDiagram {
                 d.position = {x: fa.x, y: fa.y};
                 d.setHighlight(fa.highlight);
                 d.visible = fa.visible;
+                d.showProperties = fa.showProperties;
                 d.refresh();
                 if (d.visible) {
                     captureBBoxForNode(d);
@@ -205,6 +201,7 @@ class FlowDiagram {
                 d.showContent = fa.showContent;
                 d.setHighlight(fa.highlight);
                 d.visible = fa.visible;
+                d.content = fa.content;
                 d.refresh();
                 if (d.visible) {
                     captureBBoxForNode(d);
@@ -256,6 +253,7 @@ class FlowDiagram {
             // Update ControllerService instances.
             this.controllerServices.children.forEach(d => {
                 var fa = frame[d.toId()];
+                d.showProperties = fa.showProperties;
                 d.setHighlight(fa.highlight);
                 d.visible = fa.visible;
             });
@@ -274,6 +272,7 @@ class FlowDiagram {
                     d.visible = fa.visible;
                     d.showHeaders = fa.showHeaders;
                     d.showContent = fa.showContent;
+                    d.content = fa.content;
                 });
                 // Then render DataSets.
                 var dsf = frame[ds.toId()];

@@ -31,6 +31,10 @@ th {
     border-color: #C7C7C7;
 }
 
+tr.highlighted {
+    background-color: #F6EA64;
+}
+
 #flow-diagram {
     display: flex;
     flex-direction: row;
@@ -92,6 +96,7 @@ th {
     padding-top: 5px;
     padding: 2px;
     font-family: sans-serif;
+    font-size: smaller;
     background-color: #F3F3F3;
     color: #6D6D6D;
     border-bottom: 2px solid #9FCDD9;
@@ -146,6 +151,10 @@ th {
     color: #FAFAFA;
 }
 
+.processor-name i {
+    margin-right: 5px;
+}
+
 .processor-name-highlight {
     background-color: #409CB4;
 }
@@ -186,6 +195,7 @@ th {
     box-shadow: 5px 5px 3px #C3C3C7;
     position: absolute;
     padding: 20px;
+    max-width: 500px;
     opacity: 0.9;
     z-index: 100;
 }

@@ -8,6 +8,8 @@ class Tooltip extends HTMLRenderable {
     }
 
     setupContainer(container) {
+        this.setDraggable(container);
+        
         container.classed('tooltip', true);
 
         // Set position to avoid showing moving animation when it's created.
