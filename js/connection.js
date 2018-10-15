@@ -57,13 +57,19 @@ class Connection extends RenderableContainer {
 
     setFlowFiles(_flowFiles) {
         var connectionId = this.toId();
-        // Unlink all.
-        this.flowFiles.forEach(f => {
-            f.queued = false;
-            f.connectionId = undefined;
-        });
-        // Link new.
+        var flowFileIds = _flowFiles.map(f => f.toId());
+        // Unlink removed.
+        this.flowFiles.filter(f => !flowFileIds.includes(f.toId()))
+            .forEach(f => {
+                if (f.connectionId === connectionId) {
+                    f.hide();
+                    f.queued = false;
+                    f.connectionId = undefined;
+                }
+            });
+        // Link specified.
         _flowFiles.forEach(f => {
+            f.hide();
             f.queued = true;
             f.connectionId = connectionId;
         });

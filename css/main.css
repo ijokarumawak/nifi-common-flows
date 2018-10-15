@@ -209,6 +209,10 @@ tr.highlighted {
     color: #F3F3F3;
 }
 
+.tooltip img {
+    opacity: 1;
+}
+
 .node-boundary {
     border: 1px solid blue;
     position: absolute;
