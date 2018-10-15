@@ -1,9 +1,12 @@
 [
     {"name": "DataFlowIntro", "desc": "Simple update."},
     {"name": "CommonDataFlow", "desc": "Simple update."},
+    {"name": "FlowFile", "desc": "Simple update."},
+    {"name": "RouteOnAttribute", "desc": "Simple update."},
     {"name": "UpdateAttribute", "desc": "Simple update."},
     {"name": "ReplaceText", "desc": "Simple replace."},
     {"name": "ConvertRecord", "desc": "Simple convert."},
+    {"name": "UpdateRecord", "desc": "Simple convert."},
     {"name": "Prioritizer", "desc": "Simple convert."},
     {"name": "DataSets", "desc": "Simple convert."}
 ]

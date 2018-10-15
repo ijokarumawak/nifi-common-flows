@@ -50,6 +50,12 @@ class DataObject extends HTMLRenderable {
         return `data-object_${this.id}`;
     }
 
+    getPosition() {
+        var parentDiv = document.getElementById(this.getParentElementId());
+        var thisDiv = document.getElementById(this.toId());
+        return {x: parentDiv.offsetLeft + thisDiv.offsetLeft, y: parentDiv.offsetLeft + thisDiv.offsetTop};
+    }
+
     getParentElementId() {
         return this.parentId;
     }
@@ -70,7 +76,7 @@ class DataObject extends HTMLRenderable {
         // Create headers place-holder
         var headerContainer = container.append('div')
         .classed('data-object-headers-container', true);
-        headerContainer.append('div').text('Attributes').classed('data-label', true);
+        headerContainer.append('div').text('Headers').classed('data-label', true);
         var headerTable = headerContainer.append('table')
             .append('tbody')
             .classed('data-object-headers', true);

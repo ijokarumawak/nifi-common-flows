@@ -1,13 +1,13 @@
 class FlowFile extends HTMLRenderable {
     constructor(id, seq) {
         super(id);
-        this.seq = seq;
+        this.seq = typeof seq === 'number' ? seq : -1;
         this.queued = false;
         this.attributes = [];
     }
 
     toId() {
-        return `flow-file_${this.id}_${this.seq}`;
+        return this.seq < 0 ? `flow-file_${this.id}` : `flow-file_${this.id}_${this.seq}`;
     }
 
     getParentElementId() {
@@ -25,11 +25,12 @@ class FlowFile extends HTMLRenderable {
             .style('position', d => d.queued ? null : 'absolute')
             .style('left', d => d.queued ? null : `${d.position.x}px`)
             .style('top', d => d.queued ? null : `${d.position.y}px`)
+            .style('max-width', d => d.queued ? null : `50%`)
             .style('opacity', 0);
             
         container.append('div')
             .classed('flow-file-id', true)
-            .text(d => `${d.id}.${d.seq}`);
+            .text(d => d.seq < 0 ? `${d.id}` : `${d.id}.${d.seq}`);
 
         // Create attribute place-holder
         var attributeContainer = container.append('div')
@@ -56,7 +57,8 @@ class FlowFile extends HTMLRenderable {
     renderContainer(container) {
 
         // Update style.
-        container.transition()
+        var containerTransition = this.queued ? container : container.transition();
+        containerTransition
             .style('left', d => d.queued ? null : `${d.position.x}px`)
             .style('top', d => d.queued ? null : `${d.position.y}px`)
             .style('position', d => d.queued ? 'static' : 'absolute')

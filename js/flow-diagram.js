@@ -1,8 +1,9 @@
 class FlowDiagram {
 
-    constructor({title, flowFiles, processors, connections, controllerServices,
+    constructor({title, description, flowFiles, processors, connections, controllerServices,
                  dataSets, arrows, tooltips, actions}) {
         this.title = title;
+        this.description = description;
         this.index = 0;
         this.flowFiles = flowFiles;
         this.processors = processors;
@@ -60,6 +61,16 @@ class FlowDiagram {
                 });
             }
 
+            if (this.connections) {
+                this.connections.forEach(d => {
+                    var id = d.toId();
+                    frame[id] = {
+                        highlight: orPrevious(action, prevFrame, id, 'highlight', false),
+                        flowFiles: orPrevious(action, prevFrame, id, 'flowFiles', [])
+                    };
+                });
+            }
+
             frame['controller-services'] = {
                 x: orPrevious(action, prevFrame, 'controller-services', 'x', 0),
                 y: orPrevious(action, prevFrame, 'controller-services', 'y', 0)
@@ -111,7 +122,9 @@ class FlowDiagram {
                     var id = d.toId();
                     frame[id] = {
                         visible: orPrevious(action, prevFrame, id, 'visible', false),
-                        content: orPrevious(action, prevFrame, id, 'content', false),
+                        content: orPrevious(action, prevFrame, id, 'content', undefined),
+                        width: orPrevious(action, prevFrame, id, 'width', undefined),
+                        height: orPrevious(action, prevFrame, id, 'height', undefined),
                         x: orPrevious(action, prevFrame, id, 'x', 0),
                         y: orPrevious(action, prevFrame, id, 'y', 0)
                     };
@@ -124,6 +137,9 @@ class FlowDiagram {
     render() {
         d3.select('#diagram-title')
             .text(`${this.title}`);
+
+        d3.select('#diagram-description')
+            .text(`${this.description}`);
 
         d3.select('#diagram-index')
             .text(`${this.index + 1} / ${this.actions.length}`);
@@ -189,6 +205,10 @@ class FlowDiagram {
 
         // Pre-render Connections to create divs so that queued FlowFiles can be added.
         if (this.connections) {
+            this.connections.forEach(d => {
+                var fa = frame[d.toId()];
+                d.setFlowFiles(fa.flowFiles);
+            });
             this.connections.filter(d => d.isVisible()).forEach(d => d.ensureContainer());
         }
 
@@ -297,6 +317,8 @@ class FlowDiagram {
                 d.position = {x: fa.x, y: fa.y};
                 d.content = fa.content;
                 d.visible = fa.visible;
+                d.width = fa.width;
+                d.height = fa.height;
                 d.refresh();
             });
         }

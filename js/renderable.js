@@ -3,6 +3,10 @@ class Renderable {
         this.id = id;
     }
 
+    getPosition() {
+        return this.position;
+    }
+
     bbox() {
         var container = document.getElementById(this.toId());
         var style = window.getComputedStyle(container);
@@ -12,17 +16,79 @@ class Renderable {
         var width = container.scrollWidth
             + Number.parseInt(style.borderLeftWidth)
             + Number.parseInt(style.borderRightWidth);
+        var p = this.getPosition();
         var box = {
-                x: this.position.x,
-                y: this.position.y,
+                x: p.x,
+                y: p.y,
                 h: height,
                 w: width,
-                cx: this.position.x + (width / 2),
-                cy: this.position.y + (height / 2)
+                cx: p.x + (width / 2),
+                cy: p.y + (height / 2)
             }
         return box;
     }
 
+    /**
+     * Calculates the point on the specified bounding box that is closest to the
+     * specified point.
+     *
+     * @param {object} p            The starting point
+     * @param {object} bbox         The bounding box
+     */
+    getPerimeterPoint(p, bbox) {
+        // calculate theta
+        var theta = Math.atan2(bbox.h, bbox.w);
+
+        // get the rectangle radius
+        var xRadius = bbox.w / 2;
+        var yRadius = bbox.h / 2;
+
+        // get the center point
+        var cx = bbox.x + xRadius;
+        var cy = bbox.y + yRadius;
+
+        // calculate alpha
+        var dx = p.x - cx;
+        var dy = p.y - cy;
+        var alpha = Math.atan2(dy, dx);
+
+        // normalize aphla into 0 <= alpha < 2 PI
+        alpha = alpha % TWO_PI;
+        if (alpha < 0) {
+            alpha += TWO_PI;
+        }
+
+        // calculate beta
+        var beta = (Math.PI / 2) - alpha;
+
+        // detect the appropriate quadrant and return the point on the perimeter
+        if ((alpha >= 0 && alpha < theta) || (alpha >= (TWO_PI - theta) && alpha < TWO_PI)) {
+            // right quadrant
+            return {
+                'x': bbox.x + bbox.w,
+                'y': cy + Math.tan(alpha) * xRadius
+            };
+        } else if (alpha >= theta && alpha < (Math.PI - theta)) {
+            // bottom quadrant
+            return {
+                'x': cx + Math.tan(beta) * yRadius,
+                'y': bbox.y + bbox.h
+            };
+        } else if (alpha >= (Math.PI - theta) && alpha < (Math.PI + theta)) {
+            // left quadrant
+            return {
+                'x': bbox.x,
+                'y': cy - Math.tan(alpha) * xRadius
+            };
+        } else {
+            // top quadrant
+            return {
+                'x': cx - Math.tan(beta) * yRadius,
+                'y': bbox.y
+            };
+        }
+    }
+        
     refresh() {
         if (this.isVisible()) {
             this.render();

@@ -63,6 +63,11 @@ tr.highlighted {
     margin-bottom: 5px;
 }
 
+#diagram-description {
+    align-self: flex-end;
+    padding-right: 10px;
+}
+
 #control-panel {
     align-self: flex-end;
     font-size: larger;
@@ -195,9 +200,13 @@ tr.highlighted {
     box-shadow: 5px 5px 3px #C3C3C7;
     position: absolute;
     padding: 20px;
-    max-width: 500px;
-    opacity: 0.9;
+    max-width: 70%;
+    opacity: 0.95;
     z-index: 100;
+}
+
+.tooltip a {
+    color: #F3F3F3;
 }
 
 .node-boundary {
@@ -211,6 +220,7 @@ tr.highlighted {
 
 .data-set {
     position: absolute;
+    max-width: 50%;
     z-index: 80;
 }
 

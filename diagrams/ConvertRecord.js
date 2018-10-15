@@ -20,7 +20,6 @@ var createFlowDiagram = function() {
             value: 'JsonRecordSetWriter'
         }
     ];
-    p1.showDetails = true;
     
     var a1 = new Arrow('1', f1_1, p1);
     var a2 = new Arrow('2', p1, f1_2);
@@ -52,6 +51,7 @@ var createFlowDiagram = function() {
     var tmpData = new DataSet('', 'tmp', 'Processor内処理データ', [tmpInRecords, tmpOutRecords]);
 
     return new FlowDiagram({title: 'ConvertRecord',
+        description: '最もシンプルな内容でRecordデータモデルの概念を理解しよう',
         flowFiles: [f1_1, f1_2],
         processors: [p1],
         controllerServices: [cs1, cs2],

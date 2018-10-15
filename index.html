@@ -45,7 +45,7 @@
                         <i id="diagram-last" class="fa fa-angle-double-right"></i>
                     </div>
                 </div>
-                <div>Show diagram meta data here</div>
+                <div id="diagram-description"></div>
             </div>
             <div id="diagram-body">
                 <div id='diagram-container'>
@@ -75,12 +75,14 @@
             // Show left pane.
             d3.select('#left-pane-open').style('display', 'block');
             d3.select('#left-pane-closed').style('display', 'none');
+            adjustSVGSize();
         });
 
         var closeLeftPane = () => {
             // Close left pane.
             d3.select('#left-pane-open').style('display', 'none');
             d3.select('#left-pane-closed').style('display', 'block');
+            adjustSVGSize();
         };
         d3.select('#close-left-pane').on('click', closeLeftPane);
 

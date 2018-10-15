@@ -2,9 +2,7 @@ class Connection extends RenderableContainer {
 
     constructor(id, name, pIn, pOut) {
         super(id, []);
-        var arrow = new Arrow(this.toId(), pIn, pOut)
-        arrow.visible = true;
-        this.children.push(arrow);
+        this.arrow = new Arrow(this.toId(), pIn, pOut);
         this.name = name;
         this.pIn = pIn;
         this.pOut = pOut;
@@ -20,35 +18,55 @@ class Connection extends RenderableContainer {
         return this.pIn.isVisible() && this.pOut.isVisible();
     }
 
+    setContainerPosition(container, transition) {
+        var b0 = this.bbox();
+
+        var b1 = this.pIn.bbox();
+        var b2 = this.pOut.bbox();
+
+        var p1 = this.getPerimeterPoint({x: b1.cx, y: b1.cy}, b2);
+        var p2 = this.getPerimeterPoint({x: b2.cx, y: b2.cy}, b1);
+
+        var containerTransition = transition ? container.transition() : container;
+        containerTransition
+            .style('left', `${((p1.x + p2.x) / 2) - b0.cx}px`)
+            .style('top', `${((p1.y + p2.y) / 2) - b0.cy}px`);
+    }
+
     setupContainer(container) {
         container
             .classed('connection', true)
             .append('div')
             .classed('connection-name', true)
             .text(d => d.name);
+
+        this.setContainerPosition(container, false);
     }
 
     renderContainer(container) {
+        this.setContainerPosition(container, true);
 
-        var b1 = this.pIn.bbox();
-        var b2 = this.pOut.bbox();
-        var b0 = this.bbox();
-        var position = {
-            x: ((b1.cx + b2.cx) / 2) - b0.cx,
-            y: ((b1.cy + b2.cy) / 2) - b0.cy
-        }
-
-        container.transition()
-            .style('left', `${position.x}px`)
-            .style('top', `${position.y}px`);
+        this.arrow.visible = true;
+        this.arrow.render();
     }
 
-    addFlowFiles(...flowFiles) {
+    hide() {
+        super.hide();
+        this.arrow.hide();
+    }
+
+    setFlowFiles(_flowFiles) {
         var connectionId = this.toId();
-        flowFiles.forEach(f => {
+        // Unlink all.
+        this.flowFiles.forEach(f => {
+            f.queued = false;
+            f.connectionId = undefined;
+        });
+        // Link new.
+        _flowFiles.forEach(f => {
             f.queued = true;
             f.connectionId = connectionId;
         });
-        this.flowFiles.concat(flowFiles);
+        this.flowFiles = _flowFiles;
     }
 }

@@ -26,6 +26,8 @@ class Tooltip extends HTMLRenderable {
 
         // Update style.
         container.transition()
+            .style('width', d => typeof d.width !== 'undefined' ? d.width : null)
+            .style('height', d => typeof d.hight !== 'undefined' ? d.height : null)
             .style('left', d => `${d.position.x}px`)
             .style('top', d => `${d.position.y}px`);
 
